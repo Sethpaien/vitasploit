@@ -104,30 +104,97 @@ function do_search(aspace, begaddr, endaddr, pattern)
     try {
         var score = 0;
         var found = -1;
-        if (endaddr <= begaddr) {
-            logdbg("SearchError: <endaddr> must be > <begaddr>");
+        var reverse = false;
+        if (endaddr == begaddr) {
+            logdbg("SearchError: ss begaddr must not equal endaddr");
             return;
         }
-        for (var i = begaddr; i < endaddr; i++) {
-           var cb = aspace[i]; 
-           var tb = pattern[score].charCodeAt(0);
+        if(endaddr <= begaddr){
+            logdbg("Searching in reverse");
+            reverse = true;
+        }
+
+        for(var i = begaddr; i != endaddr;){
+           var cb = aspace[i];
+           var index = reverse ? (pattern.length - score - 1) : score;
+           var tb = pattern[index].charCodeAt(0);
+           
            if ((i % 0x10000) == 0) {
                logdbg("0x" + i.toString(16) + " ...");
            }
            if (cb == tb) {
                score += 1;
-               if(score == pattern.length){found = i - score + 1; break;}
+               if(score == pattern.length){found = reverse ? i : (i - score + 1); break;}
            } else {
                score = 0;
            }
+           i += reverse ? -1 : 1;
         }
         if (found == -1) {
             logdbg("Pattern not found");
         } else {
             logdbg("Pattern " + pattern + " found at: 0x" + found.toString(16));
-        }
             return found;
+          }
     } catch(e) {
+        logdbg("SearchError: " + e);
+    }
+}
+
+/*
+Search for hex pattern in [begaddr, endaddr]
+*/
+function do_search_hex(aspace, begaddr, endaddr, pattern){
+    try {
+        var score = 0;
+        var found = -1;
+        var reverse = false;
+
+        if (endaddr == begaddr) {
+            logdbg("SearchError: ss begaddr must not equal endaddr");
+            return;
+        }
+
+        if (pattern.length % 2){
+            logdbg("SearchError: pattern must be a multiple of 2");
+            return;
+        }
+
+        if(endaddr < begaddr){
+            logdbg("Searching in reverse");
+            reverse = true;
+        }
+
+        var hexpattern = []
+        for(var i = 0; i < pattern.length; i += 2)
+        {
+            hexpattern.push(parseInt(pattern[i] + pattern[i + 1], 16));
+        }
+
+        for(var i = begaddr; i != endaddr;){
+           var cb = aspace[i];
+           var index = reverse ? (hexpattern.length - score - 1) : score;
+           var tb = hexpattern[index];
+
+           if((i % 0x10000) == 0) {
+               logdbg("0x" + i.toString(16) + " ...");
+           }
+           if(cb == tb){
+               score += 1;
+               if(score == hexpattern.length){ found = reverse ? i : (i - score + 1); break; }
+               }else{
+                   score = 0;
+               }
+
+               i += reverse ? -1 : 1;
+           }
+           if(found == -1){
+               logdbg("Pattern not found");
+           }else{
+               logdbg("Pattern " + pattern + " found at: 0x" + found.toString(16));
+               return found;
+           }
+    }catch(e){
         logdbg("SearchError: " + e);
     }
 }
@@ -305,6 +372,16 @@ function shell(aspace)
                 var pattern = cmd_s[3];
                 do_search(aspace, begaddr, endaddr, pattern);
             }
+            else if(cmd_s[0] == 'sh'){
+                if(cmd_s.length < 3){
+                    logdbg("sh <beginaddr> <endaddr> <hex pattern>");
+                    continue;
+                }
+                var begaddr = Number(cmd_s[1]);
+                var endaddr = Number(cmd_s[2]);
+                var pattern = cmd_s[3];
+                do_search_hex(aspace, begaddr, endaddr, pattern);
+            }
             else if (cmd_s[0] == 'scanm') {
                 if (cmd_s.length < 2){
                     logdbg("scanm <beginaddr>");
@@ -361,6 +438,7 @@ function shell(aspace)
 				logdbg("disasm <addr> <len> <mode>");
 				logdbg("dump <addr> <len> <outfile>");
 				logdbg("ss <beginaddr> <endaddr> <pattern>");
+				logdbg("sh <beginaddr> <endaddr> <hexpattern>");
 				logdbg("scanm <beginaddr>");
 				logdbg("dispx <beginaddr> <n>");
 				logdbg("dispim <beginaddr> <n>");
