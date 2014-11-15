@@ -25,6 +25,7 @@ Start up the server by running the `server.py` script. Using your Vita browse to
   - `disasm <addr> <len> <mode>` -> Disassemble "len" bytes at "addr" with "mode" (mode can be "arm" or "thumb)
   - `dump <addr> <len> <outfile>` -> Dump "len" bytes from "addr" to "outfile" (dumped files are saved under "dumps" folder)
   - `ss <beginaddr> <endaddr> <pattern>` -> Search for string "pattern" from "beginaddr" to "endaddr"
+  - `sh <beginaddr> <endaddr> <hexpattern>` -> Search for an hexadecimal "hexpattern" from "beginaddr" to "endaddr"
   - `scanm <beginaddr>` -> Scan for modules starting at "beginaddr"
   - `dispx <beginaddr> <n>` -> Display <n> module exports starting at "beginaddr"
   - `dispim <beginaddr> <n>` -> Display <n> module imports starting at "beginaddr"
