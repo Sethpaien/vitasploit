@@ -74,7 +74,12 @@ sceWebKitProcessFcns_v315_v318 =
 	sceSysmoduleLoadModule	:	0x0000124f8,
 }
 
-sceCommonDialogFcns_v315_v318 =
+sceCommonDialogFcns_v315 =
+{
+	sceSysModuleLoadModuleWithArgs : 0x0000b93c,
+}
+
+sceCommonDialogFcns_v318 =
 {
 	sceSysModuleLoadModuleWithArgs : 0x0000ba2c,
 }
@@ -745,7 +750,7 @@ version_deps =
 		},
 		"SceCommonDialog":
 		{
-			functions : sceCommonDialogFcns_v315_v318, 
+			functions : sceCommonDialogFcns_v315, 
             gadgets : {}
 		},
         "SceLibKernel":
@@ -795,7 +800,7 @@ version_deps =
 		},
 		"SceCommonDialog":
 		{
-			functions : sceCommonDialogFcns_v315_v318,  
+			functions : sceCommonDialogFcns_v318,  
             gadgets : {}
 		},
         "SceLibKernel":
