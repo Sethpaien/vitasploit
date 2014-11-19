@@ -28,6 +28,21 @@ function get_bytes(aspace, addr, len)
 }
 
 /*
+	Run a script from the shell
+*/
+function run_script(script)
+{
+	try
+    {
+        eval(script);
+    }
+    catch(e)
+    {
+        logdbg("RunScriptError: " + e);
+    }
+}
+
+/*
     Read len bytes from addr (30000 bytes at a time)
 */
 function do_read(aspace, addr, len)
@@ -97,7 +112,7 @@ function do_dis(aspace, addr, len, mode)
 }
 
 /*
-    Search for pattern in [begaddr, endaddr[
+    Search for pattern in [begaddr, endaddr]
 */
 function do_search(aspace, begaddr, endaddr, pattern)
 {
@@ -135,16 +150,17 @@ function do_search(aspace, begaddr, endaddr, pattern)
         } else {
             logdbg("Pattern " + pattern + " found at: 0x" + found.toString(16));
             return found;
-          }
+        }
     } catch(e) {
         logdbg("SearchError: " + e);
     }
 }
 
 /*
-Search for hex pattern in [begaddr, endaddr]
+	Search for hex pattern in [begaddr, endaddr]
 */
-function do_search_hex(aspace, begaddr, endaddr, pattern){
+function do_search_hex(aspace, begaddr, endaddr, pattern)
+{
     try {
         var score = 0;
         var found = -1;
@@ -190,7 +206,7 @@ function do_search_hex(aspace, begaddr, endaddr, pattern){
            }
            if(found == -1){
                logdbg("Pattern not found");
-           }else{
+           } else {
                logdbg("Pattern " + pattern + " found at: 0x" + found.toString(16));
                return found;
            }
@@ -325,7 +341,7 @@ function shell(aspace)
         while(true) {
             var cmd = getcmd();
             var cmd_s = cmd.split(" ");
-            if(cmd_s[0] == "exit"){
+            if(cmd_s[0] == "exit") {
                 logdbg("Exiting...");
                 return;
             }
@@ -339,7 +355,7 @@ function shell(aspace)
                 do_read(aspace, addr, len); 
             }
             else if (cmd_s[0] == "disasm") {
-                if (cmd_s.length < 3){
+                if (cmd_s.length < 3) {
                     logdbg("disasm <addr> <len> <mode>");
                     continue;
                 }
@@ -356,7 +372,6 @@ function shell(aspace)
                     logdbg("dump <addr> <len> <outfile>");
                     continue;
                 }
-
                 var addr = Number(cmd_s[1]);
                 var len = Number(cmd_s[2]);
                 var fname = cmd_s[3];
@@ -373,7 +388,7 @@ function shell(aspace)
                 do_search(aspace, begaddr, endaddr, pattern);
             }
             else if(cmd_s[0] == 'sh'){
-                if(cmd_s.length < 3){
+                if (cmd_s.length < 3) {
                     logdbg("sh <beginaddr> <endaddr> <hex pattern>");
                     continue;
                 }
@@ -383,7 +398,7 @@ function shell(aspace)
                 do_search_hex(aspace, begaddr, endaddr, pattern);
             }
             else if (cmd_s[0] == 'scanm') {
-                if (cmd_s.length < 2){
+                if (cmd_s.length < 2) {
                     logdbg("scanm <beginaddr>");
                     continue;
                 }
@@ -391,27 +406,31 @@ function shell(aspace)
                 scan_mod_info(aspace, begaddr);
             }
             else if (cmd_s[0] == 'dispx') {
-                if(cmd_s.length < 2){
+                if (cmd_s.length < 2) {
                     logdbg("dispx <beginaddr> <n>");
                     continue;
                 }
                 var begaddr = Number(cmd_s[1]);
                 var n = 1;
-                if(cmd_s.length > 2){n = Number(cmd_s[2])};
+                if (cmd_s.length > 2) {
+					n = Number(cmd_s[2])
+				};
                 disp_ex(aspace, begaddr, n);
             }
             else if (cmd_s[0] == 'dispim') {
-                if(cmd_s.length < 2){
+                if (cmd_s.length < 2) {
                     logdbg("dispim <beginaddr> <n>");
                     continue;
                 }
                 var begaddr = Number(cmd_s[1]);
                 var n = 1;
-                if(cmd_s.length > 2){n = Number(cmd_s[2])};
+                if (cmd_s.length > 2) {
+					n = Number(cmd_s[2])
+				};
                 disp_imp(aspace, begaddr, n);
             }
             else if (cmd_s[0] == 'dispminf') {
-                if (cmd_s.length < 2){
+                if (cmd_s.length < 2) {
                     logdbg("dispminf <beginaddr>");
                     continue;
                 }
@@ -419,7 +438,7 @@ function shell(aspace)
                 disp_minfo(aspace, begaddr);
             }
             else if(cmd_s[0] == 'scanback') {
-                if (cmd_s.length < 3){
+                if (cmd_s.length < 3) {
                     logdbg("scanback <begaddr> <step>");
                     continue;
                 }
@@ -432,8 +451,17 @@ function shell(aspace)
                 document.location.href='/index.html';
                 return;
             }
+			else if(cmd_s[0] == "run") {
+				if (cmd_s.length < 2) {
+                    logdbg("run <script>");
+                    continue;
+                }
+				logdbg("Running...");
+                run_script(cmd.substring(4, cmd.length));
+            }
 			else if(cmd_s[0] == "help") {
 				logdbg("Commands: ");
+				logdbg("run <script>");
 				logdbg("read <addr> <len>");
 				logdbg("disasm <addr> <len> <mode>");
 				logdbg("dump <addr> <len> <outfile>");

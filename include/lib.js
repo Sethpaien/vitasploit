@@ -2,24 +2,29 @@
    Resolved library functions
 */
 
-// FW 3.00 library functions' offsets.
-sceWebKitProcessFcns_v300 =
+// FW 3.00 and 3.01 library functions' offsets.
+sceWebKitProcessFcns_v300_v301 =
 {
 	sceSysmoduleLoadModule	:	0x000011b20,
 }
 
-sceCommonDialogFcns_v300 =
+sceCommonDialogFcns_v300_v301 =
 {
-	sceSysModuleLoadModuleWithArgs : 0x0000e2d0,
+	sceSysmoduleLoadModuleWithArgs : 0x0000e2d0,
 }
 
-sceLibcFcns_v300 =
+sceAppUtilFcns_v300_v301 =
+{
+	sceCallSupportUri : 0x000073b8,
+}
+
+sceLibcFcns_v300_v301 =
 {
 	fopen  : 0x00004565,
 	fread  : 0x00004899,
 }
 
-sceNetFcns_v300 =
+sceNetFcns_v300_v301 =
 {
 	sceNetHtons  : 0x000022bd,
 	sceNetConnect  : 0x000026bd,
@@ -28,7 +33,7 @@ sceNetFcns_v300 =
 	sceNetSocketClose  : 0x0000276d,
 }
 
-sceKernelFcns_v300 =
+sceKernelFcns_v300_v301 =
 {
 	// Syscalls
 	sceKernelAllocMemBlock	: 0x000035e4,
@@ -76,12 +81,17 @@ sceWebKitProcessFcns_v315_v318 =
 
 sceCommonDialogFcns_v315 =
 {
-	sceSysModuleLoadModuleWithArgs : 0x0000b93c,
+	sceSysmoduleLoadModuleWithArgs : 0x0000b93c,
 }
 
 sceCommonDialogFcns_v318 =
 {
-	sceSysModuleLoadModuleWithArgs : 0x0000ba2c,
+	sceSysmoduleLoadModuleWithArgs : 0x0000ba2c,
+}
+
+sceAppUtilFcns_v315_v318 =
+{
+	sceCallSupportUri : 0x000076c0,
 }
 
 sceLibcFcns_v315_v318 =
@@ -677,7 +687,7 @@ version_deps =
             gadgets:
             {			
 				ldmr0 : 0x3bc534,			//  ldm	r0, {r0, r3, r4, r9, fp, ip, pc}
-				ldmr1 : 0x453ff0,   		//  ldm     r1, {r0, ip, lr, pc}
+				ldmr1 : 0x453ff0,   		//  ldm r1, {r0, ip, lr, pc}
 				ldmr9 : 0x3aa784,			//  ldm	r9, {r2, r5, r8, ip, lr, pc}
 				ldmr8 : 0x3a5838,			//  ldm	r8, {r0, r1, r2, r4, r5, ip, lr, pc} 
 				ldmr4 : 0x43c858,	        //  ldm	r4, {r1, r3, ip, lr, pc}
@@ -692,27 +702,87 @@ version_deps =
         },
 		"SceWebKitProcess":
 		{
-			functions : sceWebKitProcessFcns_v300, 
+			functions : sceWebKitProcessFcns_v300_v301, 
             gadgets : {}
 		},
 		"SceCommonDialog":
 		{
-			functions : sceCommonDialogFcns_v300, 
+			functions : sceCommonDialogFcns_v300_v301, 
+            gadgets : {}
+		},
+		"SceAppUtil":
+		{
+			functions : sceAppUtilFcns_v300_v301, 
             gadgets : {}
 		},
         "SceLibKernel":
         { 
-            functions : sceKernelFcns_v300, 
+            functions : sceKernelFcns_v300_v301, 
             gadgets : {}
         },
         "SceNet":
         {
-            functions: sceNetFcns_v300,
+            functions: sceNetFcns_v300_v301,
             gadgets: {}
         },
         "SceLibc":
         {
-            functions: sceLibcFcns_v300,
+            functions: sceLibcFcns_v300_v301,
+            gadgets : 
+            {
+                scesetjmp : 0x13EE0 | 1,
+                scelongjmp : 0x13F10 | 1
+            }
+        }
+    },
+	v3_01:
+	{
+        "SceWebKit":        
+        {
+            gadgets:
+            {			
+				ldmr0 : 0x3bc534,			//  ldm	r0, {r0, r3, r4, r9, fp, ip, pc}
+				ldmr1 : 0x453ff0,   		//  ldm r1, {r0, ip, lr, pc}
+				ldmr9 : 0x3aa784,			//  ldm	r9, {r2, r5, r8, ip, lr, pc}
+				ldmr8 : 0x3a5838,			//  ldm	r8, {r0, r1, r2, r4, r5, ip, lr, pc} 
+				ldmr4 : 0x43c858,	        //  ldm	r4, {r1, r3, ip, lr, pc}
+				ldmr1_0 : 0x1b5cac, 		//  ldm	r1, {r0, ip, lr, pc}
+				ldmr5 : 0x3a506c,			//  ldm	r5, {r0, r2, r3, r4, r5, ip, lr, pc}
+				iloop : 0x9851c | 1,        //  infinite loop
+                bxlr : 0x2b3a | 1,          //  bx lr
+				str3 : 0x7f4ac | 1,         //  str     r3, [r0, #4]; bx  lr
+                movr30 : 0x535278 | 1       //  movs    r3, r0 ; bx lr 
+            },
+            functions: {}
+        },
+		"SceWebKitProcess":
+		{
+			functions : sceWebKitProcessFcns_v300_v301, 
+            gadgets : {}
+		},
+		"SceCommonDialog":
+		{
+			functions : sceCommonDialogFcns_v300_v301, 
+            gadgets : {}
+		},
+		"SceAppUtil":
+		{
+			functions : sceAppUtilFcns_v300_v301, 
+            gadgets : {}
+		},
+        "SceLibKernel":
+        { 
+            functions : sceKernelFcns_v300_v301, 
+            gadgets : {}
+        },
+        "SceNet":
+        {
+            functions: sceNetFcns_v300_v301,
+            gadgets: {}
+        },
+        "SceLibc":
+        {
+            functions: sceLibcFcns_v300_v301,
             gadgets : 
             {
                 scesetjmp : 0x13EE0 | 1,
@@ -751,6 +821,11 @@ version_deps =
 		"SceCommonDialog":
 		{
 			functions : sceCommonDialogFcns_v315, 
+            gadgets : {}
+		},
+		"SceAppUtil":
+		{
+			functions : sceAppUtilFcns_v315_v318, 
             gadgets : {}
 		},
         "SceLibKernel":
@@ -801,6 +876,11 @@ version_deps =
 		"SceCommonDialog":
 		{
 			functions : sceCommonDialogFcns_v318,  
+            gadgets : {}
+		},
+		"SceAppUtil":
+		{
+			functions : sceAppUtilFcns_v315_v318, 
             gadgets : {}
 		},
         "SceLibKernel":

@@ -157,11 +157,8 @@ function list_modules(doDump)
 		{
 			var mod_seg_addr = mod_seg_info_addr + j * 0x18;
 			
-			if (aspace32[(mod_seg_addr) / 4] != 0x18) 
-			{
-				logdbg("Error: Bad module segment!");
-				break;
-			}
+			if (aspace32[(mod_seg_addr) / 4] != 0x18)
+				continue;
                 
             logdbg("Module segment info: #" + j);
             var mod_vaddr = aspace32[(mod_seg_addr + 8) / 4];
@@ -181,55 +178,93 @@ function list_modules(doDump)
 }
 
 /*
-    Brute-force load all possible user modules using sceSysmoduleLoadModule and sceSysModuleLoadModuleWithArgs
+    Brute-force load all possible user modules using sceSysmoduleLoadModule and sceSysmoduleLoadModuleWithArgs
 */
 function load_sysmodules()
 {
 	var scewkproc = libraries.SceWebKitProcess.functions;
 	var scecdiag = libraries.SceCommonDialog.functions;
 	
-	var mod_start_ptr = allocate_memory(0x10);
+	var mod_start_ptr = allocate_memory(0x100);
 	
-	for(var i = 1; i < 0x100; i++)
+	// sceSysmoduleLoadModule can load a few modules
+	for (var i = 1; i < 0x100; i++)
 	{
 		var load_result = scewkproc.sceSysmoduleLoadModule(i);
-		
-		if (load_result != 0)
-		{
-			logdbg("Failed to load module #" + i.toString() + ": 0x" + load_result.toString(16));
-		}
+		logdbg("sceSysmoduleLoadModule(#" + i.toString() + "): 0x" + load_result.toString(16));
 	}
 	
-	var loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000001, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000002, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000003, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000004, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x8000001b, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x8000001e, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000021, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000022, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000023, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000024, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000026, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
-	loadargs_result = scecdiag.sceSysModuleLoadModuleWithArgs(0x80000027, 0, 0, mod_start_ptr);
-	logdbg("sceSysModuleLoadModuleWithArgs: 0x" + loadargs_result.toString(16));
+	// sceSysmoduleLoadModuleWithArgs can load modules by ID
+	// WARNING: Loading modules with this function may crash the Vita's LiveArea
+	for (var k1 = 0x80000000; k1 < 0x800000ff; k1++)
+	{
+		if (k1 != 0x80000008 && k1 != 0x80000012)
+		{
+			var loadargs_result1 = scecdiag.sceSysmoduleLoadModuleWithArgs(k1, 0, 0, mod_start_ptr);
+			logdbg("sceSysmoduleLoadModuleWithArgs(0x" + k1.toString(16) + "): 0x" + loadargs_result1.toString(16));
+        }
+    }
+	
+	// Reload all modules to resolve dependencies
+	for (var k2 = 0x80000000; k2 < 0x800000ff; k2++)
+	{
+		if (k2 != 0x80000008 && k2 != 0x80000012)
+		{
+			var loadargs_result2 = scecdiag.sceSysmoduleLoadModuleWithArgs(k2, 0, 0, mod_start_ptr);
+			logdbg("sceSysmoduleLoadModuleWithArgs(0x" + k2.toString(16) + "): 0x" + loadargs_result2.toString(16));
+        }
+    }
+	
+	// Module 0x80000008 (ScePaf) has special arguments
+	var scepaf_argc = 0x14;
+	var scepaf_argp = allocate_memory(scepaf_argc);
+	aspace32[(scepaf_argp) / 4] = 0x00300000;
+	aspace32[(scepaf_argp + 4) / 4] = 0x00000000;
+	aspace32[(scepaf_argp + 8) / 4] = 0x00000000;
+	aspace32[(scepaf_argp + 12) / 4] = 0x0000000d;
+	aspace32[(scepaf_argp + 16) / 4] = 0x00000000;
+			
+	var scepaf_result = scecdiag.sceSysmoduleLoadModuleWithArgs(0x80000008, scepaf_argc, scepaf_argp, mod_start_ptr);
+	logdbg("sceSysmoduleLoadModuleWithArgs(0x80000008): 0x" + scepaf_result.toString(16));
+	
+	// Reload all modules again (except 0x8000000d)
+	for (var k3 = 0x80000000; k3 < 0x800000ff; k3++)
+	{
+		if (k3 != 0x80000008 && k3 != 0x8000000d && k3 != 0x80000012)
+		{
+			var loadargs_result3 = scecdiag.sceSysmoduleLoadModuleWithArgs(k3, 0, 0, mod_start_ptr);
+			logdbg("sceSysmoduleLoadModuleWithArgs(0x" + k3.toString(16) + "): 0x" + loadargs_result3.toString(16));
+        }
+    }
+		
+	/* 
+	Missing modules:
+	
+	-> Error 0x80024804 (unknown):
+		0x80000005, 0x80000006, 0x80000009, 0x8000000a, 0x8000000b, 0x8000000c
+	
+	-> Crash:
+		0x8000000d, 0x80000012
+		
+	-> Error 0x8002d003 (no library):
+		0x8000000e, 0x8000000f, 0x80000010, 0x80000011, 0x80000013, 0x80000014, 0x80000015
+		0x80000016, 0x80000017, 0x80000018, 0x8000001a, 0x80000021, 0x80000022, 0x80000026
+	
+	-> Error 0x80010002 (no entry):
+		0x80000019, 0x8000001c
+		   
+	-> Error 0x8002d013 (old library):
+		0x8000001d
+		   
+	-> Error 0x800f0b34 (unknown):
+		0x80000028, 0x80000029
+	*/
 }
 
 /*
 	Test SceLibKernel memory allocation
 */
-function libkernel_mem_test(mname, mtype, msize)
+function mem_test(mname, mtype, msize)
 {
 	var scekernel = libraries.SceLibKernel.functions;
 	
@@ -259,4 +294,18 @@ function libkernel_mem_test(mname, mtype, msize)
 	}
 	
 	logdbg("Freed memory UID: 0x" + muid.toString(16));
+}
+
+/*
+	Call support URI
+*/
+function support_uri(cmd)
+{
+	var sceapputil = libraries.SceAppUtil.functions;
+	
+	var uri_addr = allocate_memory(0x100);
+	mymemcpy(uri_addr, cmd, cmd.length);
+
+	var result = sceapputil.sceCallSupportUri(0x40000, uri_addr);
+	logdbg("sceCallSupportUri: 0x" + result.toString(16));
 }

@@ -1,5 +1,5 @@
 /*
-    ROP planning (Firmware 3.00, 3.15 and 3.18)
+    ROP planning (Firmware 3.00, 3.01, 3.15 and 3.18)
 */
 
 /*
@@ -29,6 +29,17 @@ ver_offsets = {
             scekernbase_off: 0x8291,
             scelibcbase_off: 0xfafd,
             scelibnetbase_off: 0x22d5,
+            elementvtable_off: -0x68,
+            setscrollleft_off: 0x5b
+        },
+	v3_01:{
+            scewkbase_off : 0x3d73a9,
+            scelibcentry_off: 0x6c4718,
+            scelibnetentry_off: 0x6c46e4,
+            scekernentry_off: 0x6c46f4,
+            scekernbase_off: 0x8291,
+            scelibcbase_off: 0xfafd,
+            scelibnetbase_off: 0x22d9,
             elementvtable_off: -0x68,
             setscrollleft_off: 0x5b
         },
@@ -126,9 +137,9 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 			
 			var retval = allocate_tmp(0x4);
 
-			if (version == "v3_00")
+			if ((version == "v3_00") || (version == "v3_01"))
 			{
-				// ROP chain for FW 3.00
+				// ROP chain for FWs 3.00 and 3.01
 				var r0values = allocate_tmp(0x10 * 4);
 				var r9values = allocate_tmp(0x10 * 4);
 				var r8values = allocate_tmp(0x10 * 4);
