@@ -22,6 +22,7 @@ Start up the server by running the `server.py` script. Using your Vita browse to
 - With this setting the script will launch an interactive shell for memory reading/writing;
 - Commands:
   - `read <addr> <len>` -> Read "len" bytes from "addr" (the output is printed to the shell)
+  - `run <script>` -> Run a "script" function from the shell (e.g.: "run load_sysmodules()")
   - `disasm <addr> <len> <mode>` -> Disassemble "len" bytes at "addr" with "mode" (mode can be "arm" or "thumb)
   - `dump <addr> <len> <outfile>` -> Dump "len" bytes from "addr" to "outfile" (dumped files are saved under "dumps" folder)
   - `ss <beginaddr> <endaddr> <pattern>` -> Search for string "pattern" from "beginaddr" to "endaddr"
@@ -39,9 +40,10 @@ Start up the server by running the `server.py` script. Using your Vita browse to
 - In the main html file (`index.html`) set `initMemoryHole(true)`;
 - With this setting the script will launch a pre-programmed, firmware dependent, ROP chain;
 - You can use the functions availabe at `include/samples.js` to interact in a SDK-like fashion with the Vita;
-- The functions are called from the `include/exploit.js` file. Simply uncomment them and modify as you wish;
-- The following tests are currently implemented for firmwares 3.00, 3.15 and 3.18:
+- The functions are called from the `include/exploit.js` file. Simply uncomment them and modify as you wish or use the "run" command from the shell;
+- The following tests are currently implemented for firmwares 3.00, 3.01, 3.15 and 3.18:
   - `Module dumping test` -> Based on CodeLion/BrianBTB/BBalling1's module dumping code and complemented by nas's sysmodule loading code. Forces all user modules to be loaded into memory and dumps them to "dumps" folder
+  - `Support URI call test` -> A small test that allows sending URI commands (e.g.: "psgm:", "settings_dlg:") to the Vita 
   - `Memory test` -> A simple memory alloc/free test using the SceLibKernel syscalls
   - `Socket connection test` -> Original (akai) socket test to send messages to/from the Vita
   - `Directory listing test` -> Original (akai) test to list directories inside the Vita
