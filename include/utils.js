@@ -51,6 +51,7 @@ function init_memory(start_addr)
 {
     return function(size) {
         var res = start_addr;
+		while(size % 0x4) ++size; // Add padding to prevent memory misalignment...
         start_addr += size;
         return res;
     }

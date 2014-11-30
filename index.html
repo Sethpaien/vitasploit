@@ -2,6 +2,7 @@
 <body>
 <script src="include/exploit.js"></script>
 <script src="include/jquery.min.js"></script>
+<script src="include/js-struct.js"></script>
 <script src="include/lib.js"></script>
 <script src="include/rop.js"></script>
 <script src="include/samples.js"></script>
@@ -22,7 +23,7 @@ window.onload = function()
 		
         // Try 4 times to initialize, if it doesn't work exit
         for (var i = 0; i < 4; i++) {
-            var aspace = initMemoryHole(false);
+            var aspace = initMemoryHole(true);
             if (aspace != -1) {
 				found = 1;
 				break

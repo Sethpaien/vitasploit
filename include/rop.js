@@ -20,51 +20,54 @@ SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW = 0x09408060
 /*
     Version offsets
 */
-ver_offsets = {
-	v3_00:{
-            scewkbase_off : 0x3d73a9,
-            scelibcentry_off: 0x6c4718, 
-            scelibnetentry_off: 0x6c46f0,
-            scekernentry_off: 0x6c46f4,
-            scekernbase_off: 0x8291,
-            scelibcbase_off: 0xfafd,
-            scelibnetbase_off: 0x22d5,
-            elementvtable_off: -0x68,
-            setscrollleft_off: 0x5b
-        },
-	v3_01:{
-            scewkbase_off : 0x3d73a9,
-            scelibcentry_off: 0x6c4718,
-            scelibnetentry_off: 0x6c46e4,
-            scekernentry_off: 0x6c46f4,
-            scekernbase_off: 0x8291,
-            scelibcbase_off: 0xfafd,
-            scelibnetbase_off: 0x22d9,
-            elementvtable_off: -0x68,
-            setscrollleft_off: 0x5b
-        },
-    v3_15:{
-            scewkbase_off : 0x3cc619,
-            scelibcentry_off: 0x6b5700, 
-            scelibnetentry_off: 0x6b56cc,
-            scekernentry_off: 0x6b56dc,
-            scekernbase_off: 0x82d9,
-            scelibcbase_off: 0xf989,
-            scelibnetbase_off: 0x22d1,
-            elementvtable_off: -0x68,
-            setscrollleft_off: 0x5b
-        },
-    v3_18:{ 
-            scewkbase_off : 0x3cc619,
-            scelibcentry_off: 0x6b56b0, 
-            scelibnetentry_off: 0x6b567c,
-            scekernentry_off: 0x6b568c,
-            scekernbase_off: 0x82d9,
-            scelibcbase_off: 0xf989,
-            scelibnetbase_off: 0x22d1,
-            elementvtable_off: -0x68,
-            setscrollleft_off: 0x5b
-         }
+function defineOffsets()
+{
+	ver_offsets = {
+		v3_00:{
+				scewkbase_off : 0x3d73a9,
+				scelibcentry_off: 0x6c4718, 
+				scelibnetentry_off: 0x6c46f0,
+				scekernentry_off: 0x6c46f4,
+				scekernbase_off: 0x8291,
+				scelibcbase_off: 0xfafd,
+				scelibnetbase_off: 0x22d5,
+				elementvtable_off: -0x68,
+				setscrollleft_off: 0x5b
+			},
+		v3_01:{
+				scewkbase_off : 0x3d73a9,
+				scelibcentry_off: 0x6c4718,
+				scelibnetentry_off: 0x6c46e4,
+				scekernentry_off: 0x6c46f4,
+				scekernbase_off: 0x8291,
+				scelibcbase_off: 0xfafd,
+				scelibnetbase_off: 0x22d9,
+				elementvtable_off: -0x68,
+				setscrollleft_off: 0x5b
+			},
+		v3_15:{
+				scewkbase_off : 0x3cc619,
+				scelibcentry_off: 0x6b5700, 
+				scelibnetentry_off: 0x6b56cc,
+				scekernentry_off: 0x6b56dc,
+				scekernbase_off: 0x82d9,
+				scelibcbase_off: 0xf989,
+				scelibnetbase_off: 0x22d1,
+				elementvtable_off: -0x68,
+				setscrollleft_off: 0x5b
+			},
+		v3_18:{ 
+				scewkbase_off : 0x3cc619,
+				scelibcentry_off: 0x6b56b0, 
+				scelibnetentry_off: 0x6b567c,
+				scekernentry_off: 0x6b568c,
+				scekernbase_off: 0x82d9,
+				scelibcbase_off: 0xf989,
+				scelibnetbase_off: 0x22d1,
+				elementvtable_off: -0x68,
+				setscrollleft_off: 0x5b
+			}
+	}
 }
 
 /*
