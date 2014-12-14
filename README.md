@@ -39,15 +39,23 @@ Start up the server by running the `server.py` script. Using your Vita browse to
 **ROP mode:**
 - In the main html file (`index.html`) set `initMemoryHole(true)`;
 - With this setting the script will launch a pre-programmed, firmware dependent, ROP chain;
-- You can use the functions availabe at `include/samples.js` to interact in a SDK-like fashion with the Vita;
-- The functions are called from the `include/exploit.js` file. Simply uncomment them and modify as you wish or use the "run" command from the shell;
+- You can use the functions availabe at `include/functions.js` and `include/functions_ex.js` to interact in a SDK-like fashion with the Vita;
+- Several batch tests are available at `include/tests.js`. Simply uncomment them under Run_Tests() and the tests will run after the exploit is ready;
 - The following tests are currently implemented for firmwares 3.00, 3.01, 3.15 and 3.18:
-  - `Module dumping test` -> Based on CodeLion/BrianBTB/BBalling1's module dumping code and complemented by nas's sysmodule loading code. Forces all user modules to be loaded into memory and dumps them to "dumps" folder
-  - `Support URI call test` -> A small test that allows sending URI commands (e.g.: "psgm:", "settings_dlg:") to the Vita 
-  - `Memory test` -> A simple memory alloc/free test using the SceLibKernel syscalls
-  - `Socket connection test` -> Original (akai) socket test to send messages to/from the Vita
-  - `Directory listing test` -> Original (akai) test to list directories inside the Vita
-  - `File retrieval test` -> Original (akai) test to find and dump user files from the Vita
+  - `testStructs()` -> MrNetrix's test for custom structure allocation
+  - `Test_Modules()` -> Based on CodeLion/BrianBTB/BBalling1's module dumping code and complemented by nas's sysmodule loading code. Forces all user modules to be loaded into memory and dumps them to "dumps" folder
+  - `Test_Memblock()` -> A simple memory alloc/free test using the SceLibKernel syscalls
+  - `Test_Malloc()` -> An exhaustive malloc test that tries to allocate as much memory as possible
+  - `Test_Motion()` -> A simple test to track and print the gyroscope's coordinates
+  - `Test_SupportURI()` -> A small test that allows sending URI commands (e.g.: "psgm:", "settings_dlg:") to the Vita
+  - `Test_Socket()` -> Original (akai) socket test to send messages to/from the Vita
+  - `Test_Dir()` -> Original (akai) test to list directories inside the Vita
+  - `Test_GetFile()` -> Original (akai) test to find and dump user files from the Vita
+  - `Test_WriteFile()` -> Test file creation by mounting a temporary path and writing a dummy file to it
+  - `Test_Photos()` ->  Mount and list the contents of photo0
+  - `Test_Control()` -> Track and print the left and right analog buttons' coordinates
+  - `Test_Touch()` -> Print the coordinates of the last screen area that was touched
+  - `Test_Gxm()` -> Test the GXM memory by mapping some if it's components
     
 Credits
 =======
