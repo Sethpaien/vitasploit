@@ -17,8 +17,9 @@ var MODIM_SIZE = 0x34;
 function get_bytes(aspace, addr, len)
 {
     var retbuf = "";
+	var hex = 0x0;
     for (var i = 0; i < len; i++) {
-        hex = aspace[addr + i].toString(16)
+        hex = aspace[addr + i].toString(16);
         if(hex.length == 1){
             hex = "0" + hex;
         }
@@ -34,11 +35,29 @@ function run_script(script)
 {
 	try
     {
-        eval(script);
+        jQuery.globalEval(script); // With this, your variables can persist.
     }
     catch(e)
     {
         logdbg("RunScriptError: " + e);
+    }
+}
+
+/*
+    Output text to file
+*/
+function log_out(text)
+{
+    try
+	{
+        if (log_out_filepath)
+        {
+            sendcmsg("log", 0, text + "\n", log_out_filepath);
+        }
+    }
+	catch(e)
+	{
+        logdbg("LogOutError: " + e);
     }
 }
 

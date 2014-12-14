@@ -5,6 +5,29 @@
 function defineLibraryFuncs()
 {
 	// FW 3.00 and 3.01 library functions' offsets.
+	sceGxmFcns_v300_v301 =
+	{
+		sceGxmInitialize 						:	0x0000af44,
+		sceGxmInitialize_vsh		 			:	0x0000afcc,
+				
+		sceGxmMapMemory  						:	0x0000b89c,
+		sceGxmUnmapMemory						:   0x0000b96c,
+		sceGxmMapVertexUsseMemory				:   0x0000baa4,
+		sceGxmUnmapVertexUsseMemory				:   0x0000bbc4,
+		sceGxmMapFragmentUsseMemory 			:   0x0000bc68,
+		sceGxmUnmapFragmentUsseMemory			:   0x0000bd94,
+		
+		sceGxmCreateContext						:	0x00006a20,
+		sceGxmDestroyContext					:	0x00006f60,
+		
+		sceGxmCreateRenderTarget				:	0x0001242c,
+		sceGxmRenderTargetGetDriverMemBlock		:	0x0001246c,
+		sceGxmDestroyRenderTarget				:   0x00012504,
+		sceGxmGetRenderTargetMemSize			:   0x000125e4,
+			
+		sceGxmTerminate 						:	0x0000b058,
+	}
+	
 	sceCommonDialogMainFcns_v300_v301 =
 	{
 
@@ -12,34 +35,72 @@ function defineLibraryFuncs()
 
 	scePafFcns_v300_v301 =
 	{
-
+		sceTouchPeekFunc						:   0x00262a58,
+		sceTouchGetPanelInfo 					: 	0x00262a68,
+		sceTouchReadFunc 						:	0x00262a98,
+		
+		sceCtrl_install							:	0x00263b68,
+		sceCtrl_uninstall						:	0x00263b78,
+		sceCtrlReadBufferPositive_1				:   0x00262dc8,
+		sceCtrl_unk1							:   0x00262dd8,
+		sceCtrl_unk2							:   0x00262de8,
+		sceCtrlReadBufferPositive_2				:   0x00262df8,
+		sceCtrlSetSamplingMode_1				:   0x00262e08,
+		sceCtrlSetSamplingMode_2				:   0x00262e18,
 	}
 
 	sceDriverUserFcns_v300_v301 =
 	{
-		sceAppMgrConvertVs0UserDrivePath	:   0x00001254,
+		sceKernelDelayThread 					: 	0x00000df4,
+		
+		sceAppMgr_mount							:   0x000011e4,
+		sceAppMgrConvertVs0UserDrivePath		:   0x00001254,
+		
+		sceMotionStartSampling 					:   0x00006d81,
+		sceMotionMagnetometerOn					:	0x00006d35,
+		sceMotionStopSampling 					:	0x00006ded,
+		sceMotionGetState 						:	0x00005911,
 	}
 
 	sceWebKitProcessFcns_v300_v301 =
 	{
-		sceSysmoduleLoadModule				:	0x00011b20,
+		sceRegMgrForGame_read					:   0x00011b30,
+		sceRegMgrForGame_write					:   0x00011b40,
+		
+		sceKernelGetSystemSwVersion				: 	0x00011990,
+		
+		sceSysmoduleLoadModule					:	0x00011b20,
+		sceSysmoduleUnloadModule				:	0x00011b10,
 	}
 
 	sceCommonDialogFcns_v300_v301 =
 	{
-		sceSysmoduleLoadModuleWithArgs : 0x0000e2d0,
+		sceSysmoduleLoadModuleWithArgs 			: 	0x0000e2d0,
+		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000e2c0,
 	}
 
 	sceAppUtilFcns_v300_v301 =
 	{
-		sceCallSupportUri : 0x000073b8,
+		sceKernelCreateCallback					: 	0x000078b8,
+		sceKernelDeleteCallback					: 	0x000078c8,
+		
+		sceAppUtilSystemParamGetInt 			: 	0x00002a07,
+		sceAppUtilInit							: 	0x00002343,
+		sceAppUtilPhotoMount 					: 	0x00002845,
+		
+		sceCallSupportUri 						: 	0x000073b8,
 	}
 
 	sceLibcFcns_v300_v301 =
 	{
+		fclose : 0x00003e29,
 		fopen  : 0x00004565,
 		fread  : 0x00004899,
+		fwrite : 0x00004bf5,
+		ftell  : 0x00004af1,
+		fseek  : 0x00004a99,
 		malloc : 0x0000facd,
+		free   : 0x0000fadd,
 		memcpy : 0x00013d71,
 		memset : 0x00013e81,
 		memcmp : 0x000055c5,
@@ -57,13 +118,19 @@ function defineLibraryFuncs()
 	sceKernelFcns_v300_v301 =
 	{
 		// Syscalls
-		sceKernelAllocMemBlock	: 0x000035e4,
+		sceKernelAllocMemBlock		: 0x000035e4,
 		sceKernelGetMemBlockBase	: 0x000035d4,
-		sceKernelFreeMemBlock	: 0x000035c4,
-		sceKernelGetModuleList  : 0x00003c34,
-		sceKernelGetModuleInfo  : 0x00003c44,
+		sceKernelFreeMemBlock		: 0x000035c4,
+		sceKernelGetModuleList  	: 0x00003c34,
+		sceKernelGetModuleInfo  	: 0x00003c44,
 	
 		// Functions
+		sceKernelGetThreadId  		: 0x000001b5,
+		sceKernelCreateThread  		: 0x00009f2d,
+		sceKernelStartThread  		: 0x000099ed,
+		sceSblACMgrIsGameProgram 	: 0x00003f94,
+		sceKernelGetOpenPsId 		: 0x00003fa4,
+		sceLibRng_generate			: 0x00009f8d,
 		sceClibMemcpy  : 0x00000001,
 		sceKernelCallModuleExit  : 0x000011b5,
 		sceKernelGetModuleInfoByAddr  : 0x0000122d,
@@ -95,6 +162,31 @@ function defineLibraryFuncs()
 	}
 
 	// FW 3.15 and 3.18 library functions' offsets.
+	sceGxmFcns_v315_v318 =
+	{
+		sceGxmInitialize 						:	0x0000aee4,
+		sceGxmInitialize_vsh		 			:	0x0000af6c,
+		
+		sceGxmMapMemory  						:	0x0000b848,
+		sceGxmUnmapMemory						:   0x0000b918,
+		
+		sceGxmMapVertexUsseMemory				:   0x0000ba50,
+		sceGxmUnmapVertexUsseMemory				:   0x0000bb98,
+		
+		sceGxmMapFragmentUsseMemory 			:   0x0000bc3c,
+		sceGxmUnmapFragmentUsseMemory			:   0x0000bd90,
+		
+		sceGxmCreateContext						:	0x000069c0,
+		sceGxmDestroyContext					:	0x00006ef8,
+		
+		sceGxmCreateRenderTarget				:	0x000123ac,
+		sceGxmRenderTargetGetDriverMemBlock		:	0x000123ec,
+		sceGxmDestroyRenderTarget				:   0x00012484,
+		sceGxmGetRenderTargetMemSize			:   0x00012564,
+		
+		sceGxmTerminate 						:	0x0000aff8,
+	}
+	
 	sceCommonDialogMainFcns_v315_v318 =
 	{
 
@@ -102,32 +194,66 @@ function defineLibraryFuncs()
 
 	scePafFcns_v315_v318 =
 	{
-
+		sceTouchPeekFunc						:   0x002525e4,
+		sceTouchGetPanelInfo 					: 	0x002525f4,
+		sceTouchReadFunc 						:	0x00252624,
+		
+		sceCtrl_install							:	0x00253764,
+		sceCtrl_uninstall						:	0x00253774,
+		sceCtrlReadBufferPositive_1				:   0x00252944,
+		sceCtrl_unk1							:   0x00252964,
+		sceCtrl_unk2							:   0x00252974,
+		sceCtrlReadBufferPositive_2				:   0x00252984,
+		sceCtrlSetSamplingMode_1				:   0x00252994,
+		sceCtrlSetSamplingMode_2				:   0x002529A4,
 	}
 
 	sceDriverUserFcns_v315_v318 =
 	{
-		sceAppMgrConvertVs0UserDrivePath	:   0x00001a04,
+		sceKernelDelayThread 					: 	0x00001504,
+		
+		sceAppMgrUser_mount						:   0x00001994,
+		sceAppMgrConvertVs0UserDrivePath		:   0x00001a04,
+		
+		sceMotionStartSampling 					:   0x00007399,
+		sceMotionMagnetometerOn					:	0x0000734d,
+		sceMotionStopSampling 					:	0x00007405,
+		sceMotionGetState 						:	0x00005e69,
 	}
 
 	sceWebKitProcessFcns_v315_v318 =
 	{
-		sceSysmoduleLoadModule	:	0x000124f8,
+		sceRegMgrForGame_read					:   0x00012508,
+		sceRegMgrForGame_write					:   0x00012518,
+		
+		sceKernelGetSystemSwVersion				: 	0x00012378,
+		
+		sceSysmoduleLoadModule					:	0x000124f8,
+		sceSysmoduleUnloadModule				:	0x000124e8,
 	}
 
 	sceCommonDialogFcns_v315 =
 	{
-		sceSysmoduleLoadModuleWithArgs : 0x0000b93c,
+		sceSysmoduleLoadModuleWithArgs 			: 	0x0000b93c,
+		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000b92c,
 	}
 
 	sceCommonDialogFcns_v318 =
 	{
-		sceSysmoduleLoadModuleWithArgs : 0x0000ba2c,
+		sceSysmoduleLoadModuleWithArgs   		: 	0x0000ba2c,
+		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000ba1c,
 	}
 
 	sceAppUtilFcns_v315_v318 =
 	{
-		sceCallSupportUri : 0x000076c0,
+		sceKernelCreateCallback					: 	0x00007bd0,
+		sceKernelDeleteCallback					: 	0x00007be0,
+		
+		sceAppUtilSystemParamGetInt 			: 	0x00002b95,
+		sceAppUtilInit							: 	0x000024b3,
+		sceAppUtilPhotoMount 					: 	0x000029d3,
+		
+		sceCallSupportUri 						: 	0x000076c0,
 	}
 
 	sceLibcFcns_v315_v318 =
@@ -400,6 +526,7 @@ function defineLibraryFuncs()
 		fileno  : 0x0000449d,
 		strdup  : 0x000067b5,
 		fopen  : 0x000044b1,
+		free : 0x0000f968,
 	}
 
 	sceNetFcns_v315_v318 =
@@ -467,13 +594,14 @@ function defineLibraryFuncs()
 	sceKernelFcns_v315_v318 =
 	{
 		// Syscalls
-		sceKernelAllocMemBlock	: 0x000054ec,
+		sceKernelAllocMemBlock		: 0x000054ec,
 		sceKernelGetMemBlockBase	: 0x000054dc,
-		sceKernelFreeMemBlock	: 0x000054cc,
-		sceKernelGetModuleList  : 0x00005b3c,
-		sceKernelGetModuleInfo  : 0x00005b4c,
+		sceKernelFreeMemBlock		: 0x000054cc,
+		sceKernelGetModuleList  	: 0x00005b3c,
+		sceKernelGetModuleInfo  	: 0x00005b4c,
 		
 		// Functions
+		sceLibRng_generate			: 0x00009fd1,
 		sceKernelAtomicSubAndGet32  : 0x00002238,
 		sceKernelPuts  : 0x00001225,
 		sceIoDevctl  : 0x00009805,
@@ -736,6 +864,11 @@ function defineLibraryFuncs()
 				},
 				functions: {}
 			},
+			"SceGxm":
+			{
+				functions : sceGxmFcns_v300_v301, 
+				gadgets : {}
+			},
 			"SceCommonDialogMain":
 			{
 				functions : sceCommonDialogMainFcns_v300_v301, 
@@ -805,6 +938,11 @@ function defineLibraryFuncs()
 					movr30 : 0x535278 | 1       //  movs    r3, r0 ; bx lr 
 				},
 				functions: {}
+			},
+			"SceGxm":
+			{
+				functions : sceGxmFcns_v300_v301, 
+				gadgets : {}
 			},
 			"SceCommonDialogMain":
 			{
@@ -879,6 +1017,11 @@ function defineLibraryFuncs()
 				},
 				functions: {}
 			},
+			"SceGxm":
+			{
+				functions : sceGxmFcns_v315_v318, 
+				gadgets : {}
+			},
 			"SceCommonDialogMain":
 			{
 				functions : sceCommonDialogMainFcns_v315_v318,  
@@ -948,6 +1091,11 @@ function defineLibraryFuncs()
 					movr30 : 0x47a748 | 1          	//  movs    r3, r0 ; bx lr 
 				},
 				functions: {}
+			},
+			"SceGxm":
+			{
+				functions : sceGxmFcns_v315_v318, 
+				gadgets : {}
 			},
 			"SceCommonDialogMain":
 			{

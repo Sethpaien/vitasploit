@@ -18,6 +18,14 @@ function Int(u)
 }
 
 /*
+    Align memory
+*/
+function align_mem(data, align)
+{
+	return (((data) + ((align) - 1)) & ~((align) - 1));
+}
+
+/*
     Swap endianness of 32-bit number
 */
 function swap32(val)

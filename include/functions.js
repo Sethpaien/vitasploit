@@ -1,15 +1,56 @@
 /*
-   Samples for ROP
+   Functions for ROP
 */
 
 /*
-   Connect to ip on given port and send message
+    Defines
 */
-function socket_send(ip, port, msg)
+SCE_NET_AF_INET = 2
+SCE_NET_SOCK_STREAM = 1
+SIZEOF_SIN = 16
+SCE_NET_SO_RCVTIMEO = 0x1006
+SCE_NET_SOL_SOCKET = 0xffff
+
+/*
+    Native malloc
+*/
+function libc_malloc(size)
+{
+    return libraries.SceLibc.functions.malloc(size);
+}
+
+/*
+    Native memcpy
+*/
+function libc_memcpy(dest, src, len)
+{
+    return libraries.SceLibc.functions.memcpy(dest, src, len);
+}
+
+/*
+    Native memset
+*/
+function libc_memset(dest, val, len)
+{
+    return libraries.SceLibc.functions.memset(dest, val, len);
+}
+
+/*
+    Native memcmp
+*/
+function libc_memcmp(addr1, addr2, len)
+{
+    return libraries.SceLibc.functions.memcmp(addr1, addr2, len);
+}
+
+/*
+   Connect to ip on given port
+*/
+function socket_connect(ip, port)
 {
     var scenet = libraries.SceNet.functions;
+	
     var sockaddr = allocate_memory(32); 
-
     mymemset(sockaddr, 0, SIZEOF_SIN);
 
     aspace[sockaddr] = SIZEOF_SIN;
@@ -35,16 +76,33 @@ function socket_send(ip, port, msg)
     logdbg("Calling SceNetConnect()");
     var r = scenet.sceNetConnect(sockfd, sockaddr, SIZEOF_SIN); 
     logdbg("-> 0x" + r.toString(16) + "\n"); 
+	
+	return sockfd;    
+}
 
-    var msgaddr = allocate_memory(msg.length);
-
+/*
+   Send message
+*/
+function socket_send(sockfd, msg)
+{
+	var scenet = libraries.SceNet.functions;
+	
+	var msgaddr = allocate_memory(msg.length);
     mymemcpy(msgaddr, msg, msg.length);
 
     logdbg("Calling SceNetSend()");
     var sent = scenet.sceNetSend(sockfd, msgaddr, msg.length, 0);
     logdbg("-> 0x" + sent.toString(16) + "\n"); 
+}
 
-    logdbg("Calling SceNetClose()");
+/*
+   Close socket
+*/
+function socket_close(sockfd)
+{
+	var scenet = libraries.SceNet.functions;
+	
+	logdbg("Calling SceNetClose()");
     var sent = scenet.sceNetSocketClose(sockfd, 0, 0, 0);
     logdbg("-> 0x" + sent.toString(16) + "\n"); 
 }
@@ -186,12 +244,12 @@ function list_modules(m_name, doDump)
 /*
     Brute-force load all possible user modules using sceSysmoduleLoadModule
 */
-function load_sysmodules1()
+function load_sysmodules()
 {
 	var scewkproc = libraries.SceWebKitProcess.functions;
 	
 	// sceSysmoduleLoadModule can load a few modules
-	for (var i = 1; i < 0x100; i++)
+	for (var i = 1; i < 0x65; i++)
 	{
 		var load_result = scewkproc.sceSysmoduleLoadModule(i);
 		logdbg("sceSysmoduleLoadModule(#" + i.toString() + "): 0x" + load_result.toString(16));
@@ -201,51 +259,36 @@ function load_sysmodules1()
 /*
     Brute-force load all possible user modules using sceSysmoduleLoadModuleWithArgs
 */
-function load_sysmodules2()
+function load_sysmodules_args()
 {
 	var scecdiag = libraries.SceCommonDialog.functions;
 	
 	var mod_start_ptr = allocate_memory(0x100);
 	
+	// Unload SceCommonDialogMain first
+	var unloadargs_result = scecdiag.sceSysmoduleUnloadModuleWithArgs(0x80000012, 0, 0, mod_start_ptr);
+	logdbg("sceSysmoduleUnloadModuleWithArgs(0x80000012): 0x" + unloadargs_result.toString(16));
+	
 	// sceSysmoduleLoadModuleWithArgs can load modules by ID
 	// WARNING: Loading modules with this function may crash the Vita's LiveArea
-	for (var k1 = 0x80000000; k1 < 0x800000ff; k1++)
+	for (var k = 0x80000001; k < 0x80000065; k++)
 	{
-		if (k1 != 0x80000008 && k1 != 0x8000000d && k1 != 0x80000012)
+		if (k != 0x80000008 && k != 0x8000000f && k != 0x80000012)
 		{
-			var loadargs_result1 = scecdiag.sceSysmoduleLoadModuleWithArgs(k1, 0, 0, mod_start_ptr);
-			logdbg("sceSysmoduleLoadModuleWithArgs(0x" + k1.toString(16) + "): 0x" + loadargs_result1.toString(16));
-        }
-    }
-	
-	// Reload all modules to resolve dependencies
-	for (var k2 = 0x80000000; k2 < 0x800000ff; k2++)
-	{
-		if (k2 != 0x80000008 && k2 != 0x8000000d && k2 != 0x80000012)
-		{
-			var loadargs_result2 = scecdiag.sceSysmoduleLoadModuleWithArgs(k2, 0, 0, mod_start_ptr);
-			logdbg("sceSysmoduleLoadModuleWithArgs(0x" + k2.toString(16) + "): 0x" + loadargs_result2.toString(16));
+			var loadargs_result = scecdiag.sceSysmoduleLoadModuleWithArgs(k, 0, 0, mod_start_ptr);
+			logdbg("sceSysmoduleLoadModuleWithArgs(0x" + k.toString(16) + "): 0x" + loadargs_result.toString(16));
         }
     }
 		
 	/* 
 	Missing modules:
-	
-	-> Error 0x80024804 (unknown):
-		0x80000005, 0x80000006, 0x80000009, 0x8000000a, 0x8000000b, 0x8000000c
-	
-	-> Crash:
-		0x8000000d
 		
 	-> Error 0x8002d003 (no library):
-		0x8000000e, 0x8000000f, 0x80000010, 0x80000011, 0x80000013, 0x80000014, 0x80000015
-		0x80000016, 0x80000017, 0x80000018, 0x8000001a, 0x80000021, 0x80000022, 0x80000026
+		0x8000000d, 0x8000000e, 0x80000010, 0x80000011, 0x80000013, 0x80000014, 0x80000015,
+		0x80000016, 0x80000017, 0x80000018, 0x8000001d, 0x80000021, 0x80000022, 0x80000026
 	
 	-> Error 0x80010002 (no entry):
 		0x80000019, 0x8000001c
-		   
-	-> Error 0x8002d013 (old library):
-		0x8000001d
 		   
 	-> Error 0x800f0b34 (unknown):
 		0x80000028, 0x80000029
@@ -273,6 +316,19 @@ function load_scepaf()
 }
 
 /*
+	Load ScePhotoImportDialogPlugin
+*/
+function load_scephotoimpdlgplugin()
+{
+	var scecdiag = libraries.SceCommonDialog.functions;
+	
+	var mod_start_ptr = allocate_memory(0x100);
+	
+	var scephotoimpdlgplugin_result = scecdiag.sceSysmoduleLoadModuleWithArgs(0x8000000f, 0, 0, mod_start_ptr);
+	logdbg("sceSysmoduleLoadModuleWithArgs(0x8000000f): 0x" + scephotoimpdlgplugin_result.toString(16));
+}
+
+/*
 	Load SceCommonDialogMain
 */
 function load_scecdiagmain(seg1addr)
@@ -286,112 +342,4 @@ function load_scecdiagmain(seg1addr)
 			
 	var scecdiagmain_result = scecdiag.sceSysmoduleLoadModuleWithArgs(0x80000012, scecdiagmain_argc, scecdiagmain_argp, mod_start_ptr);
 	logdbg("sceSysmoduleLoadModuleWithArgs(0x80000012): 0x" + scecdiagmain_result.toString(16));
-}
-
-/*
-    Native malloc
-*/
-function libc_malloc(size)
-{
-    return libraries.SceLibc.functions.malloc(size);
-}
-
-/*
-    Native memcpy
-*/
-function libc_memcpy(dest, src, len)
-{
-    return libraries.SceLibc.functions.memcpy(dest, src, len);
-}
-
-/*
-    Native memset
-*/
-function libc_memset(dest, val, len)
-{
-    return libraries.SceLibc.functions.memset(dest, val, len);
-}
-
-/*
-    Native memcmp
-*/
-function libc_memcmp(addr1, addr2, len)
-{
-    return libraries.SceLibc.functions.memcmp(addr1, addr2, len);
-}
-
-/*
-	Test SceLibKernel memory allocation
-*/
-function mem_test(mname, mtype, msize)
-{
-	var scekernel = libraries.SceLibKernel.functions;
-	
-	var mname_addr = allocate_memory(mname.length + 1);
-	var mbase_ptr_addr = allocate_memory(0x4);
-	mymemcpy(mname_addr, mname + "\x00", mname.length);
-	
-	var muid = scekernel.sceKernelAllocMemBlock(mname_addr, mtype, msize, 0);
-	logdbg("Allocated memory UID: 0x" + muid.toString(16));
-	
-	var base_result = scekernel.sceKernelGetMemBlockBase(muid, mbase_ptr_addr);
-	
-	if (base_result != 0x0)
-	{
-		logdbg("Error: 0x" + base_result.toString(16));
-        return aspace
-	}
-	
-	logdbg("Memory base pointer: 0x" + mbase_ptr_addr.toString(16));
-	
-	var free_result = scekernel.sceKernelFreeMemBlock(muid);
-	
-	if (free_result != 0x0)
-	{
-		logdbg("Error: 0x" + free_result.toString(16));
-        return aspace
-	}
-	
-	logdbg("Freed memory UID: 0x" + muid.toString(16));
-}
-
-/*
-	Call support URI
-*/
-function support_uri(cmd)
-{
-	var sceapputil = libraries.SceAppUtil.functions;
-	
-	var uri_addr = allocate_memory(0x100);
-	mymemcpy(uri_addr, cmd, cmd.length);
-
-	var result = sceapputil.sceCallSupportUri(0x40000, uri_addr);
-	logdbg("sceCallSupportUri: 0x" + result.toString(16));
-}
-
-/*
-	Convert a path using sceAppMgrConvertVs0UserDrivePath (only works for "vs0:data/external/webcore/")
-*/
-function convert_path(path)
-{
-	var scewkproc = libraries.SceWebKitProcess.functions;
-	var scedrvusr = libraries.SceDriverUser.functions;
-	
-	var path_addr = allocate_memory(0x100);
-	var cpath_addr = allocate_memory(0x100);
-	var tmp_addr = allocate_memory(0x100);
-
-	mymemcpy(path_addr, path, path.length);
-	
-	var path_result = scedrvusr.sceAppMgrConvertVs0UserDrivePath(path_addr, cpath_addr, 0x400, tmp_addr);
-	logdbg("sceAppMgrConvertVs0UserDrivePath: 0x" + path_result.toString(16));
-	
-	var conv_path = "";
-	if (path_result == 0x0)
-	{
-		conv_path = read_string(cpath_addr);
-		logdbg("sceAppMgrConvertVs0UserDrivePath: " + conv_path);
-	}
-	
-	return conv_path;
 }

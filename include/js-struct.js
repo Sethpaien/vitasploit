@@ -25,9 +25,7 @@
  *    distribution.
  */
 
-"use strict";
 var nextStructId = 0;
-var Struct;
 
 function allocate_struct(structproto)
 {   
@@ -37,13 +35,7 @@ function allocate_struct(structproto)
     return newstruct;
 }
 
-function defineStruct()
-{
-    if (Struct) {
-        return;
-    }
-
-    Struct = Object.create(Object, {
+Struct = Object.create(Object, {
     /**
     * Defines a single byte integer value (byte/char). 
     * @param name Property name
@@ -524,12 +516,11 @@ function defineStruct()
         }
     },
 });
-};
 
 function testStructs()
 {
 	try
-	{    
+	{
 		// Define the struct layout
 		var SimpleStruct = Struct.create(
 			Struct.int16("myShort"),
@@ -574,11 +565,11 @@ function testStructs()
 		var result = libc_memcmp(originalPtr, destPtr, myStruct.byteLength);
 		if (result == 0)
 		{
-			logdbg("testStructs: Success! Destination memory equals the original memory!\n");
+			logdbg("testStructs: Success! Destination memory equals the original memory!");
 		}
 		else
 		{
-			logdbg("testStructs: Failure! Destination memory is NOT the same as the original memory!\n");
+			logdbg("testStructs: Failure! Destination memory is NOT the same as the original memory!");
 		}
 	}
 	catch(e)
