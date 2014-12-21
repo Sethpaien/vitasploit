@@ -18,7 +18,7 @@ Instructions
 Start up the server by running the `server.py` script. Using your Vita browse to the address printed by the script (`http://<ipaddr>:8888`).
 
 **Memory reading/writing mode:**
-- In the main html file (`index.html`) set `initMemoryHole(false)`;
+- In the main html file (`index.html`) set `var doROP = false`;
 - With this setting the script will launch an interactive shell for memory reading/writing;
 - Commands:
   - `read <addr> <len>` -> Read "len" bytes from "addr" (the output is printed to the shell)
@@ -37,11 +37,11 @@ Start up the server by running the `server.py` script. Using your Vita browse to
   - `exit` -> Terminate the interactive shell
 
 **ROP mode:**
-- In the main html file (`index.html`) set `initMemoryHole(true)`;
+- In the main html file (`index.html`) set `var doROP = true`;
 - With this setting the script will launch a pre-programmed, firmware dependent, ROP chain;
 - You can use the functions availabe at `include/functions.js` and `include/functions_ex.js` to interact in a SDK-like fashion with the Vita;
 - Several batch tests are available at `include/tests.js`. Simply uncomment them under Run_Tests() and the tests will run after the exploit is ready;
-- The following tests are currently implemented for firmwares 3.00, 3.01, 3.15 and 3.18:
+- The following tests are currently implemented for firmwares 2.02, 2.12, 3.00, 3.01, 3.15 and 3.18:
   - `testStructs()` -> MrNetrix's test for custom structure allocation
   - `Test_Modules()` -> Based on CodeLion/BrianBTB/BBalling1's module dumping code and complemented by nas's sysmodule loading code. Forces all user modules to be loaded into memory and dumps them to "dumps" folder
   - `Test_Memblock()` -> A simple memory alloc/free test using the SceLibKernel syscalls
@@ -49,8 +49,9 @@ Start up the server by running the `server.py` script. Using your Vita browse to
   - `Test_Motion()` -> A simple test to track and print the gyroscope's coordinates
   - `Test_SupportURI()` -> A small test that allows sending URI commands (e.g.: "psgm:", "settings_dlg:") to the Vita
   - `Test_Socket()` -> Original (akai) socket test to send messages to/from the Vita
-  - `Test_Dir()` -> Original (akai) test to list directories inside the Vita
+  - `Test_ListDir()` -> Original (akai) test to list directories inside the Vita
   - `Test_GetFile()` -> Original (akai) test to find and dump user files from the Vita
+  - `Test_GetDir()` -> Dump entire directories from the Vita
   - `Test_WriteFile()` -> Test file creation by mounting a temporary path and writing a dummy file to it
   - `Test_Photos()` ->  Mount and list the contents of photo0
   - `Test_Control()` -> Track and print the left and right analog buttons' coordinates
