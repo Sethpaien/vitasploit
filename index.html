@@ -9,25 +9,27 @@
 <script src="include/utils.js"></script>
 
 <script type="text/javascript">
-var delayedScripts;
-var delayedScriptsLoaded = 0;
+var doROP = true;
+var useShell = true;
+var updateIntervalTime = 20;
 
 // Global vars
 var log_out_filepath = "log.txt"; // Comment out to disable log_out.
 var _gc, _cnt = 0;
-
+var leakedptr;
+        
 /*
    Main
 */
-$(document).ready(function() {
-    try
-	{
+$(document).ready(function()
+{
+    try {
         var found = 0;
-        for (var i = 0; i < 20; i++)
+        
+		for(var i = 0; i < 20; i++)
 		{
-            var res = initMemoryHole(true);
-            if (res != -1)
-			{ 
+            var res = initMemoryHole(doROP);
+            if (res != -1) {
 				found = 1;
 				break
 			};
@@ -38,31 +40,23 @@ $(document).ready(function() {
             logdbg("Initialization failed!");
             return;
         }
-		
-		delayedScripts = [
-			"include/js-struct.js",
-			"include/functions_ex.js",
-			"include/tests.js"
-		]
         
-        for (var i = 0; i < delayedScripts.length; ++i)
-        {
-            var script = delayedScripts[i];
-            $.get(script, function(data) {
-                try
-				{
-					logdbg("Loaded " + delayedScripts[delayedScriptsLoaded] + " (" + (delayedScriptsLoaded + 1).toString() + "/" + delayedScripts.length.toString() + ")");
-					if (++delayedScriptsLoaded == delayedScripts.length)
-					{
-						Run_Test();
-						shell(aspace);
-					}
-				}
-				catch(e) 
-				{
-                    logdbg("getScript Error: " + e);
-                }
-            });
+        delayedScripts = [
+            "include/js-struct.js",
+            "include/functions_ex.js",
+            "include/tests.js"
+        ]
+
+        if (!delayedScripts || delayedScripts.length == 0) 
+		{
+            OnScriptsLoaded();
+        }
+        else 
+		{
+            delayedScriptsLoaded = 0;
+            currentDelayedScript = -1;
+     
+            window.setTimeout(function() { TryLoadScript() }, 100);
         }
     }
 	catch(e)
@@ -70,6 +64,47 @@ $(document).ready(function() {
         logdbg("MainError: " + e);
     }
 });
+
+function OnScriptsLoaded()
+{
+    Run_Test();
+    
+    if (useShell) 
+	{
+        shell(aspace);
+    }
+    else 
+	{        
+        updateInterval = window.setInterval(function() { UpdateFunc() }, updateIntervalTime);
+    }
+}
+
+function TryLoadScript()
+{
+    if (delayedScriptsLoaded == delayedScripts.length)
+	{
+        OnScriptsLoaded();
+        return;
+    }
+    
+    if (currentDelayedScript < delayedScriptsLoaded)
+    {
+        currentDelayedScript = delayedScriptsLoaded;
+        
+        var script = delayedScripts[delayedScriptsLoaded];
+        $.get(script, function(data)
+		{
+			logdbg("Loaded " + delayedScripts[delayedScriptsLoaded] + " (" + (delayedScriptsLoaded + 1).toString() + "/" + delayedScripts.length.toString() + ")");        
+            ++delayedScriptsLoaded;
+            
+            window.setTimeout(function() { TryLoadScript() }, 50);
+        });    
+    }
+}
+
+function UpdateFunc()
+{
+}
 </script>
 
 <div id="log"></div>

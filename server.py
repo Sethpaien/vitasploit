@@ -89,6 +89,20 @@ def dump_text(text, file_name):
 	fp = open(outPath,"a")
 	fp.write(text)
 	fp.close()
+	
+"""
+	Make directory
+"""
+def make_directory(dir_name):
+	if not os.path.exists(DUMP_PATH + "/" + dir_name):
+		os.makedirs(DUMP_PATH + "/" + dir_name)
+		
+"""
+	Remove directory
+"""
+def remove_directory(dir_name):
+	if os.path.exists(DUMP_PATH + "/" + dir_name):
+		os.removedirs(DUMP_PATH + "/" + dir_name)
 
 """
 	Display data
@@ -197,6 +211,12 @@ class VitaWebServer(SimpleHTTPServer.SimpleHTTPRequestHandler):
 			if(typ == 'log'):
 				fname = extra
 				dump_text(data, fname)
+				
+			if(typ == 'mkdir'):
+				make_directory(data)
+				
+			if(typ == 'rmdir'):
+				remove_directory(data)
 
 			if(typ == "mod_info"):
 				display_minfo(addr, data.decode('hex'))

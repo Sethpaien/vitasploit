@@ -11,7 +11,7 @@ var _log0, _log, _dview;
 function Int(u)
 {
     if (u > 0x7fffffff) {
-        return (((0xffffffff - u) * -1) -1)
+        return (((0xffffffff - u) * -1) -1);
     } else {
         return u;
     }
@@ -49,7 +49,7 @@ function read_string(addr)
         addr++;
         i = aspace[addr];
     }
-    return str
+    return str;
 }
 
 /*
@@ -218,7 +218,7 @@ function logdbg(txt)
 */
 function logAdd(txt)
 {	
-    alert(text);
+    alert(txt);
 	if (!_log0){
 		_log0 = document.getElementById("log");
 		if (!_log0) return;

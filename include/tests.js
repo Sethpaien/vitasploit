@@ -11,8 +11,9 @@ function Run_Test()
 	//Test_Motion();
     //Test_SupportURI();
 	//Test_Socket();
-	//Test_Dir();
+	//Test_ListDir();
 	//Test_GetFile();
+	//Test_GetDir();
 	//Test_WriteFile();
 	//Test_Photos();
 	//Test_Control();
@@ -45,7 +46,7 @@ function Test_Memblock()
 */
 function Test_SupportURI()
 {
-	support_uri("settings_dlg:");
+	sceCallSupportUri("settings_dlg:");
 }
 
 /*
@@ -61,7 +62,7 @@ function Test_Socket()
 /*
 	Directory listing test
 */
-function Test_Dir()
+function Test_ListDir()
 {
 	list_dir("app0:");
 	list_dir("app0:sce_sys/");
@@ -74,6 +75,15 @@ function Test_Dir()
 function Test_GetFile()
 {
 	retrieve_file("app0:eboot.bin", "eboot.bin");
+}
+
+/*
+	Directory retrieval test
+*/
+function Test_GetDir()
+{
+	retrieve_dir("app0:");
+	retrieve_dir(sceAppMgrConvertVs0UserDrivePath("vs0:data/external/webcore/"));
 }
 
 /*
@@ -190,7 +200,7 @@ function Test_WriteFile()
 	var tmp_path_addr = sceAppMgr_mount(0xCC);
 	var mount_path = read_string(tmp_path_addr);
 	
-	var fname = mount_path + "test.bin"
+	var fname = mount_path + "test.bin";
 	var fname_addr = allocate_memory(fname.length + 1);
     mymemcpy(fname_addr, fname + "\x00", fname.length);
 	

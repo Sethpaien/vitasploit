@@ -50,6 +50,111 @@ SceUMatrix4 = function(name) { return Struct.array(name, Struct.int32(), 16); };
 SceReserved = function(name, len) { return Struct.array(name, Struct.uint8(), len); };
 
 /*
+    List Directory
+*/
+function list_dir(dirname)
+{
+    var scekernel = libraries.SceLibKernel.functions;
+
+    var dirname_a = allocate_memory(0x20);
+    var dirlist = allocate_memory(0x1000);
+
+    mymemcpy(dirname_a, dirname, dirname.length);
+
+    var fd = scekernel.sceIoDopen(dirname_a);
+    fd = Int(fd);
+    if (fd < 0)
+	{
+        logdbg("sceIoDopen() failed");
+        return;
+    }
+
+    logdbg("Listing: " + dirname);
+    while (scekernel.sceIoDread(fd, dirlist) > 0)
+	{
+        myprintf(dirlist + 0x58);
+    }
+    logdbg("-\n");
+}
+
+/*
+    Retrieve the file fname and save to dumps\loc_name
+*/
+function retrieve_file(fname, loc_name)
+{
+    var scelibc = libraries.SceLibc.functions;
+    var BUFSIZE = 0x1000;
+
+    var fname_a = allocate_memory(fname.length + 1);
+    mymemcpy(fname_a, fname + "\x00", fname.length);
+
+    var mode = "r";
+    var mode_a = allocate_memory(mode.length + 1);
+    mymemcpy(mode_a, mode + "\x00", mode.length);
+	
+    var fp = scelibc.fopen(fname_a, mode_a);
+    fp = Int(fp);
+    if (fp == 0)
+	{
+        logdbg("fopen() failed");
+        return; 
+    }
+	
+    var buf = allocate_memory(BUFSIZE);
+    var n = 0;
+    while ((n = scelibc.fread(buf, 1, BUFSIZE, fp)) > 0)
+	{
+		logdbg("Dumping " + fname + " -> 0x" + n.toString(16));
+        var bytes = get_bytes(aspace, buf, n);
+        sendcmsg("dump", buf, bytes, loc_name); 
+    }
+}
+
+/*
+    Retrieve all files from dname and save to dumps
+*/
+function retrieve_dir(dname)
+{
+	var scekernel = libraries.SceLibKernel.functions;
+	var scelibc = libraries.SceLibc.functions;
+    
+	var dname_addr = allocate_memory(0x100);
+	var fname_addr = allocate_memory(0x100);
+	var dirlist = allocate_memory(0x1000);
+	mymemcpy(dname_addr, dname, dname.length);
+	
+	var fd = scekernel.sceIoDopen(dname_addr);
+    fd = Int(fd);
+    if (fd < 0)
+	{
+        logdbg("sceIoDopen() failed");
+        return;
+    }
+    
+	logdbg("Dumping: " + dname);
+	sendcmsg("mkdir", 0, dname.replace(":", "/"));
+    while (scekernel.sceIoDread(fd, dirlist) > 0)
+	{
+		var fname = read_string(dirlist + 0x58);
+		mymemcpy(fname_addr, dname, dname.length);
+		mymemcpy(fname_addr + dname.length, fname, fname.length);
+		
+		// Check if it's a file or a directory.
+		if (Int(scekernel.sceIoDopen(fname_addr)) < 0)
+		{
+			retrieve_file(read_string(fname_addr), dname.replace(":", "/") + fname);
+		}
+		else
+		{
+			mymemcpy(fname_addr + dname.length + fname.length, "/", 1);
+			retrieve_dir(read_string(fname_addr));
+		}
+		
+		mymemset(fname_addr, 0, dname.length + fname.length + 1)
+    }
+}
+
+/*
 	Call support URI
 */
 function sceCallSupportUri(cmd)
