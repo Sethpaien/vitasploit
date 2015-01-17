@@ -35,7 +35,16 @@ function defineLibraryFuncs()
 
 	scePafFcns_v202 =
 	{
+		sceTouchPeekFunc						:   0x002cdd6c,
+		sceTouchGetPanelInfo 					: 	0x002cdd7c,
+		sceTouchReadFunc 						:	0x002cddac,
 		
+		sceCtrlReadBufferPositive_1				:   0x002ce0fc,		
+		sceCtrl_unk1							:   0x002ce0cc,
+		sceCtrl_unk2							:   0x002ce0dc,
+		sceCtrlReadBufferPositive_2				:   0x002ce10c,
+		sceCtrlSetSamplingMode_1				:   0x002ce0ec,
+		sceCtrlSetSamplingMode_2				:   0x002ce11c,
 	}
 
 	sceDriverUserFcns_v202 =
@@ -531,7 +540,7 @@ function defineLibraryFuncs()
 	{
 		sceKernelDelayThread 					: 	0x00001504,
 		
-		sceAppMgrUser_mount						:   0x00001994,
+		sceAppMgr_mount							:   0x00001994,
 		sceAppMgrConvertVs0UserDrivePath		:   0x00001a04,
 		
 		sceMotionStartSampling 					:   0x00007399,
