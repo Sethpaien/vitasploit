@@ -226,6 +226,10 @@ class VitaWebServer(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 			if(typ == "mod_import"):
 				display_mimport(addr, data.decode('hex'), extra.decode('hex'))
+
+	def address_string(self):
+		host, port = self.client_address[:2]
+		return host
 				
 				
 """
