@@ -35,6 +35,12 @@ function defineLibraryFuncs()
 
 	scePafFcns_v202 =
 	{
+		sceAudioOutOutput						:	0x002ce7ec,
+		sceAudioOutOpenPort						:	0x002ce7fc,
+		sceAudio_new							:	0x002ce80c,
+		sceAudioOutSetVolume					:	0x002ce81c,
+		sceAudioOutReleasePort					:	0x002ce82c,
+		
 		sceTouchPeekFunc						:   0x002cdd6c,
 		sceTouchGetPanelInfo 					: 	0x002cdd7c,
 		sceTouchReadFunc 						:	0x002cddac,
@@ -51,7 +57,12 @@ function defineLibraryFuncs()
 	{
 		sceKernelDelayThread 					: 	0x000012c4,
 		
-		sceAppMgr_mount							:   0x00001684,
+		_sceAppMgrGetAppState					:	0x00001704,
+		sceAppMgrReceiveSystemEvent				:	0x00001934,
+		sceAppMgrLoadExec 						:	0x00001C44,
+		
+		sceAppMgr_mount1						:   0x00001684,
+		sceAppMgr_mount2						:   0x00001d44,
 		sceAppMgrConvertVs0UserDrivePath		:   0x000016f4,
 		
 		sceMotionStartSampling 					:   0x00006021,
@@ -73,12 +84,17 @@ function defineLibraryFuncs()
 
 	sceCommonDialogFcns_v202 =
 	{
+		sceKernelGetMemBlockInfoByRange			:	0x0000c200,
+		
 		sceSysmoduleLoadModuleWithArgs 			: 	0x0000c380,
 		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000c370,
 	}
 
 	sceAppUtilFcns_v202 =
 	{
+		sceAppUtilSaveSafeMemory				:	0x00002ec9,
+		sceAppUtilLoadSafeMemory				:	0x00002ee7,
+		
 		sceKernelCreateCallback					: 	0x00007a38,
 		sceKernelDeleteCallback					: 	0x00007a48,
 		
@@ -91,6 +107,10 @@ function defineLibraryFuncs()
 
 	sceLibcFcns_v202 =
 	{
+		sceKernelGetStdin	:	0x00036dc0,
+		sceKernelGetStdout	:	0x00036dd0,
+		sceKernelGetStderr	:	0x00036df0,
+		
 		fclose : 0x00000d65,
 		fopen  : 0x000014a1,
 		fread  : 0x000017d1,
@@ -115,7 +135,12 @@ function defineLibraryFuncs()
 
 	sceKernelFcns_v202 =
 	{
+		// Generic Syscall r12(ip) as syscall number
+		sceGenSyscall	: 0x00009470, //SVC 0; BX LR
+		
 		// Syscalls
+		sceKernelGetProcessId		: 0x000098ac,
+		sceKernelGetProcessParam	: 0x00009b7c,
 		sceKernelAllocMemBlock		: 0x0000949c,
 		sceKernelGetMemBlockBase	: 0x0000948c,
 		sceKernelFreeMemBlock		: 0x0000947c,
@@ -125,6 +150,7 @@ function defineLibraryFuncs()
 		sceIoRead					: 0x00009e0c,
 		sceIoClose					: 0x00009d7c,
 		sceIoWrite					: 0x00009c4c,
+		sceIoDevctl					: 0x00009c7c,
 	
 		// Functions
 		sceKernelGetThreadId  		: 0x000001b5,
@@ -155,7 +181,6 @@ function defineLibraryFuncs()
 		sceIoGetstat  : 0x0000b695,
 		sceIoChstat  : 0x0000b695,
 		sceIoSync  : 0x0000b6b5,
-		sceIoDevctl  : 0x0000b6c5,
 		sceIoIoctl  : 0x0000b6dd,
 		sceIoGetstatByFd  : 0x0000b6f5,
 		sceIoChstatByFd  : 0x0000b6fd,
@@ -194,6 +219,12 @@ function defineLibraryFuncs()
 
 	scePafFcns_v212 =
 	{
+		sceAudioOutOutput						:	0x00265874,
+		sceAudioOutOpenPort						:	0x00265884,
+		sceAudio_new							:	0x00265894,
+		sceAudioOutSetVolume					:	0x002658a4,
+		sceAudioOutReleasePort					:	0x002658b4,
+		
 		sceTouchPeekFunc						:   0x00264dd4,
 		sceTouchGetPanelInfo 					: 	0x00264de4,
 		sceTouchReadFunc 						:	0x00264e14,
@@ -210,7 +241,12 @@ function defineLibraryFuncs()
 	{
 		sceKernelDelayThread 					: 	0x000012c4,
 		
-		sceAppMgr_mount							:   0x00001694,
+		_sceAppMgrGetAppState					:	0x00001724,
+		sceAppMgrReceiveSystemEvent				:	0x00001934,
+		sceAppMgrLoadExec 						:	0x00001C14,
+		
+		sceAppMgr_mount1						:   0x00001694,
+		sceAppMgr_mount2						:	0x00001D14,
 		sceAppMgrConvertVs0UserDrivePath		:   0x00001704,
 		
 		sceMotionStartSampling 					:   0x00005fc1,
@@ -232,12 +268,17 @@ function defineLibraryFuncs()
 
 	sceCommonDialogFcns_v212 =
 	{
+		sceKernelGetMemBlockInfoByRange			:	0x0000c85c,
+		
 		sceSysmoduleLoadModuleWithArgs 			: 	0x0000c98c,
 		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000c97c,
 	}
 
 	sceAppUtilFcns_v212 =
 	{
+		sceAppUtilSaveSafeMemory				:	0x00002d3b,
+		sceAppUtilLoadSafeMemory				:	0x00002d59,
+		
 		sceKernelCreateCallback					: 	0x00007b4c,
 		sceKernelDeleteCallback					: 	0x00007b5c,
 		
@@ -250,6 +291,10 @@ function defineLibraryFuncs()
 
 	sceLibcFcns_v212 =
 	{
+		sceKernelGetStdin	:	0x00039628,
+		sceKernelGetStdout	:	0x00039638,
+		sceKernelGetStderr	:	0x00039658,
+		
 		fclose : 0x00003e29,
 		fopen  : 0x00004565,
 		fread  : 0x00004899,
@@ -274,7 +319,12 @@ function defineLibraryFuncs()
 
 	sceKernelFcns_v212 =
 	{
+		// Generic Syscall r12(ip) as syscall number
+		sceGenSyscall	: 0x00003d80, //SVC 0; BX LR
+		
 		// Syscalls
+		sceKernelGetProcessId		: 0x000041bc,
+		sceKernelGetProcessParam	: 0x000044bc,
 		sceKernelAllocMemBlock		: 0x00003dac,
 		sceKernelGetMemBlockBase	: 0x00003d9c,
 		sceKernelFreeMemBlock		: 0x00003d8c,
@@ -284,6 +334,7 @@ function defineLibraryFuncs()
 		sceIoRead					: 0x0000474c,
 		sceIoClose					: 0x000046bc,
 		sceIoWrite					: 0x0000458c,
+		sceIoDevctl					: 0x000045bc,
 	
 		// Functions
 		sceKernelGetThreadId  		: 0x000001b5,
@@ -314,7 +365,6 @@ function defineLibraryFuncs()
 		sceIoGetstat  : 0x0000b721,
 		sceIoChstat  : 0x0000b731,
 		sceIoSync  : 0x0000b741,
-		sceIoDevctl  : 0x0000b751,
 		sceIoIoctl  : 0x0000b769,
 		sceIoGetstatByFd  : 0x0000b781,
 		sceIoChstatByFd  : 0x0000b789,
@@ -353,6 +403,12 @@ function defineLibraryFuncs()
 
 	scePafFcns_v300_v301 =
 	{
+		sceAudioOutOutput						:	0x00263518,
+		sceAudioOutOpenPort						:	0x00263528,
+		sceAudio_new							:	0x00263538,
+		sceAudioOutSetVolume					:	0x00263548,
+		sceAudioOutReleasePort					:	0x00263558,
+		
 		sceTouchPeekFunc						:   0x00262a58,
 		sceTouchGetPanelInfo 					: 	0x00262a68,
 		sceTouchReadFunc 						:	0x00262a98,
@@ -371,7 +427,12 @@ function defineLibraryFuncs()
 	{
 		sceKernelDelayThread 					: 	0x00000df4,
 		
-		sceAppMgr_mount							:   0x000011e4,
+		_sceAppMgrGetAppState					:	0x00001274,
+		sceAppMgrReceiveSystemEvent				:	0x00001474,
+		sceAppMgrLoadExec 						:	0x00001784,
+		
+		sceAppMgr_mount1						:   0x000011e4,
+		sceAppMgr_mount2						:	0x00001884,
 		sceAppMgrConvertVs0UserDrivePath		:   0x00001254,
 		
 		sceMotionStartSampling 					:   0x00006d81,
@@ -393,18 +454,25 @@ function defineLibraryFuncs()
 
 	sceCommonDialogFcns_v300 =
 	{
+		sceKernelGetMemBlockInfoByRange			:	0x0000e190,
+		
 		sceSysmoduleLoadModuleWithArgs 			: 	0x0000e2d0,
 		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000e2c0,
 	}
 	
 	sceCommonDialogFcns_v301 =
 	{
+		sceKernelGetMemBlockInfoByRange			:	0x0000e268,
+		
 		sceSysmoduleLoadModuleWithArgs 			: 	0x0000e3a8,
 		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000e398,
 	}
 
 	sceAppUtilFcns_v300_v301 =
 	{
+		sceAppUtilSaveSafeMemory				:	0x00002a81,
+		sceAppUtilLoadSafeMemory				:	0x00002a9f,
+		
 		sceKernelCreateCallback					: 	0x000078b8,
 		sceKernelDeleteCallback					: 	0x000078c8,
 		
@@ -417,6 +485,10 @@ function defineLibraryFuncs()
 
 	sceLibcFcns_v300_v301 =
 	{
+		sceKernelGetStdin	:	0x00038f8c,
+		sceKernelGetStdout	:	0x00038f9c,
+		sceKernelGetStderr	:	0x00038fbc,
+		
 		fclose : 0x00003e29,
 		fopen  : 0x00004565,
 		fread  : 0x00004899,
@@ -441,7 +513,12 @@ function defineLibraryFuncs()
 
 	sceKernelFcns_v300_v301 =
 	{
+		// Generic Syscall r12(ip) as syscall number
+		sceGenSyscall	: 0x000035b8, //SVC 0; BX LR
+		
 		// Syscalls
+		sceKernelGetProcessId		: 0x000039f4,
+		sceKernelGetProcessParam	: 0x00003ce4,
 		sceKernelAllocMemBlock		: 0x000035e4,
 		sceKernelGetMemBlockBase	: 0x000035d4,
 		sceKernelFreeMemBlock		: 0x000035c4,
@@ -451,6 +528,7 @@ function defineLibraryFuncs()
 		sceIoRead					: 0x00003f74,
 		sceIoClose					: 0x00003ee4,
 		sceIoWrite					: 0x00003db4,
+		sceIoDevctl					: 0x00003de4,
 	
 		// Functions
 		sceKernelGetThreadId  		: 0x000001b5,
@@ -481,7 +559,6 @@ function defineLibraryFuncs()
 		sceIoGetstat  : 0x00009791,
 		sceIoChstat  : 0x000097a1,
 		sceIoSync  : 0x000097b1,
-		sceIoDevctl  : 0x000097c1,
 		sceIoIoctl  : 0x000097d9,
 		sceIoGetstatByFd  : 0x000097f1,
 		sceIoChstatByFd  : 0x000097f9,
@@ -522,6 +599,12 @@ function defineLibraryFuncs()
 
 	scePafFcns_v315_v318 =
 	{
+		sceAudioOutOutput						:	0x002530a4,
+		sceAudioOutOpenPort						:	0x002530b4,
+		sceAudio_new							:	0x002530c4,
+		sceAudioOutSetVolume					:	0x002530d4,
+		sceAudioOutReleasePort					:	0x002530e4,
+		
 		sceTouchPeekFunc						:   0x002525e4,
 		sceTouchGetPanelInfo 					: 	0x002525f4,
 		sceTouchReadFunc 						:	0x00252624,
@@ -540,7 +623,12 @@ function defineLibraryFuncs()
 	{
 		sceKernelDelayThread 					: 	0x00001504,
 		
-		sceAppMgr_mount							:   0x00001994,
+		_sceAppMgrGetAppState					:	0x00001a24,
+		sceAppMgrReceiveSystemEvent				:	0x00001c34,
+		sceAppMgrLoadExec 						:	0x00001f44,
+		
+		sceAppMgr_mount1						:   0x00001994,
+		sceAppMgr_mount2						:	0x00002054,
 		sceAppMgrConvertVs0UserDrivePath		:   0x00001a04,
 		
 		sceMotionStartSampling 					:   0x00007399,
@@ -562,18 +650,25 @@ function defineLibraryFuncs()
 
 	sceCommonDialogFcns_v315 =
 	{
+		sceKernelGetMemBlockInfoByRange			:	0x0000b7ec,
+		
 		sceSysmoduleLoadModuleWithArgs 			: 	0x0000b93c,
 		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000b92c,
 	}
 
 	sceCommonDialogFcns_v318 =
 	{
+		sceKernelGetMemBlockInfoByRange			:	0x0000b8dc,
+		
 		sceSysmoduleLoadModuleWithArgs   		: 	0x0000ba2c,
 		sceSysmoduleUnloadModuleWithArgs 		: 	0x0000ba1c,
 	}
 
 	sceAppUtilFcns_v315_v318 =
 	{
+		sceAppUtilSaveSafeMemory				:	0x00002c0f,
+		sceAppUtilLoadSafeMemory				:	0x00002c2d,
+		
 		sceKernelCreateCallback					: 	0x00007bd0,
 		sceKernelDeleteCallback					: 	0x00007be0,
 		
@@ -586,6 +681,10 @@ function defineLibraryFuncs()
 
 	sceLibcFcns_v315_v318 =
 	{
+		sceKernelGetStdin	:	0x0003b318,
+		sceKernelGetStdout	:	0x0003b328,
+		sceKernelGetStderr	:	0x0003b348,
+		
 		realloc  : 0x0000f989,
 		strtok  : 0x000069cd,
 		wcspbrk  : 0x0000758d,
@@ -921,7 +1020,12 @@ function defineLibraryFuncs()
 
 	sceKernelFcns_v315_v318 =
 	{
+		// Generic Syscall r12(ip) as syscall number
+		sceGenSyscall	: 0x000054c0, //SVC 0; BX LR
+
 		// Syscalls
+		sceKernelGetProcessId		: 0x000058fc,
+		sceKernelGetProcessParam	: 0x00005bec,
 		sceKernelAllocMemBlock		: 0x000054ec,
 		sceKernelGetMemBlockBase	: 0x000054dc,
 		sceKernelFreeMemBlock		: 0x000054cc,
@@ -931,12 +1035,12 @@ function defineLibraryFuncs()
 		sceIoRead					: 0x00005e7c,
 		sceIoClose					: 0x00005dec,
 		sceIoWrite					: 0x00005cbc,
+		sceIoDevctl					: 0x00005cec,
 		
 		// Functions
 		sceLibRng_generate			: 0x00009fd1,
 		sceKernelAtomicSubAndGet32  : 0x00002238,
 		sceKernelPuts  : 0x00001225,
-		sceIoDevctl  : 0x00009805,
 		sceKernelGetRWLockInfo  : 0x00009e75,
 		sceKernelAtomicGetAndAnd32  : 0x000022d8,
 		sceKernelCreateMsgPipe  : 0x000015e1,

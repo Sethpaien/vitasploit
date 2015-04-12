@@ -155,6 +155,30 @@ function retrieve_dir(dname)
 }
 
 /*
+	Wrapper to send devctl commands
+*/
+function sceIoDevctl(devname, cmd, arg_addr, arg_len, bufp_addr, bufp_len)
+{ 
+	var scekernel = libraries.SceLibKernel.functions;
+	
+	var devname_addr = allocate_memory(devname.length);
+	mymemcpy(devname_addr, devname, devname.length);
+	
+	// Send the remaining arguments through the stack
+	var stack_addr = allocate_memory(0x10);
+	aspace32[(stack_addr) / 4] = arg_len;			// arg buffer length
+	aspace32[(stack_addr + 4) / 4] = bufp_addr;		// return buffer
+	aspace32[(stack_addr + 8) / 4] = bufp_len;		// return buffer length
+	
+	var result = scekernel.sceIoDevctl(devname_addr, cmd, arg_addr, stack_addr);
+	logdbg("sceIoDevctl (devname='" + devname.toString() + "', cmd=" + cmd.toString(16) + ", arg_addr=0x" + arg_addr.toString(16)
+		+ ", arg_len=0x" + arg_len.toString(16) + ", bufp_addr=0x" + bufp_addr.toString(16) + ", bufp_len=0x" + bufp_len.toString(16) 
+		+ "): 0x" + result.toString(16));
+	
+	return result;
+}
+
+/*
 	Call support URI
 */
 function sceCallSupportUri(cmd)
@@ -193,6 +217,22 @@ function sceAppMgrConvertVs0UserDrivePath(path)
 	}
 	
 	return conv_path;
+}
+
+/*
+	Retrieve the state of a specific application
+*/
+function _sceAppMgrGetAppState(result_addr, result_size, app)
+{ 
+	var scedrvusr = libraries.SceDriverUser.functions;
+	
+	var result = scedrvusr._sceAppMgrGetAppState(result_addr, result_size, app);
+	logdbg("_sceAppMgrGetAppState: 0x" + result.toString(16));
+	
+	if (!result)
+		do_read(aspace, result_addr, result_size);
+	
+	return result;
 }
 
 /*
@@ -235,6 +275,32 @@ function sceAppUtilSystemParamGetInt(paramId, outPtr)
 
 	var res = sceapputil.sceAppUtilSystemParamGetInt(paramId, outPtr); 
     logdbg("sceAppUtilSystemParamGetInt: 0x" + res.toString(16));
+    
+    return res;
+}
+
+/*
+	Save data into safe memory
+*/
+function sceAppUtilSaveSafeMemory(data, size, offset)
+{
+	var sceapputil = libraries.SceAppUtil.functions;
+
+	var res = sceapputil.sceAppUtilSaveSafeMemory(data, size, offset); 
+    logdbg("sceAppUtilSaveSafeMemory: 0x" + res.toString(16));
+    
+    return res;
+}
+
+/*
+	Load data from safe memory
+*/
+function sceAppUtilLoadSafeMemory(data, size, offset)
+{
+	var sceapputil = libraries.SceAppUtil.functions;
+
+	var res = sceapputil.sceAppUtilLoadSafeMemory(data, size, offset); 
+    logdbg("sceAppUtilLoadSafeMemory: 0x" + res.toString(16));
     
     return res;
 }
@@ -292,6 +358,23 @@ function sceKernelFreeMemBlock(muid)
 	}
 
 	logdbg("Freed memory UID: 0x" + muid.toString(16));
+}
+
+/*
+	Get a memblock's info structure by address range
+*/
+function sceKernelGetMemBlockInfoByRange(addr, range, info_addr, disable_log)
+{ 
+	var scecdiag = libraries.SceCommonDialog.functions;
+	
+	aspace32[(info_addr) / 4] = 0x18;
+	
+	var result = scecdiag.sceKernelGetMemBlockInfoByRange(addr, range, info_addr);
+	
+	if (!disable_log)
+		logdbg("sceKernelGetMemBlockInfoByRange: 0x" + result.toString(16));
+	
+	return result;
 }
 
 /*
@@ -628,30 +711,43 @@ function sceGxmTerminate()
 /* 
 	Mount a readable/writable path using AppMgrUser
 */
-function sceAppMgr_mount(param)
+function sceAppMgr_mount1(param, mount_addr)
 {
 	var scedrvusr = libraries.SceDriverUser.functions;
 	
-	var mount_addr = allocate_memory(0x40);
-	var mount_result = scedrvusr.sceAppMgr_mount(param, mount_addr);
-	logdbg("sceAppMgr_mount: 0x" + mount_result.toString(16));
+	var mount_result = scedrvusr.sceAppMgr_mount1(param, mount_addr);
+	logdbg("sceAppMgr_mount1: 0x" + mount_result.toString(16));
 	
-	return mount_addr;
+	return mount_result;
+}
+
+/* 
+	Mount a readable/writable path using AppMgrUser
+*/
+function sceAppMgr_mount2(param, mount_addr)
+{
+	var scedrvusr = libraries.SceDriverUser.functions;
+	
+	var mount_result = scedrvusr.sceAppMgr_mount2(param, mount_addr);
+	logdbg("sceAppMgr_mount2: 0x" + mount_result.toString(16));
+	
+	return mount_result;
 }
 
 /* 
 	Generate a pseudo-random number
 */
-function sceLibRng_generate(size)
+function sceLibRng_generate(addr, size, disable_log)
 {
 	var scekernel = libraries.SceLibKernel.functions;
 	
-	var result_addr = allocate_memory(0x40);
-	var gen_result = scekernel.sceLibRng_generate(result_addr, size);
-	logdbg("sceLibRng_generate: 0x" + gen_result.toString(16));
-	do_read(aspace, result_addr, size);
+	// Maximum block size is 0x40.
+	var gen_result = scekernel.sceLibRng_generate(addr, size);
 	
-	return result_addr;
+	if (!disable_log)
+		logdbg("sceLibRng_generate: 0x" + gen_result.toString(16));
+	
+	return gen_result;
 }
 
 /* 

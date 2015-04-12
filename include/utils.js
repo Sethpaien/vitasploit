@@ -26,6 +26,14 @@ function align_mem(data, align)
 }
 
 /*
+	Extract a syscall number from memory
+*/
+function extract_syscall_number(addr)
+{
+	return ((aspace[addr + 1] << 8) + aspace[addr]) & 0xFFF;
+}
+
+/*
     Swap endianness of 32-bit number
 */
 function swap32(val)

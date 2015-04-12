@@ -16,9 +16,15 @@ function Run_Test()
 	//Test_GetDir();
 	//Test_WriteFile();
 	//Test_Photos();
+	//Test_Mount();
 	//Test_Control();
 	//Test_Touch();
 	//Test_Gxm();
+	//Test_Devctl();
+	//Test_KernelObjs();
+	//Test_Audio();
+	//Test_AddrRange();
+	//Test_FrameBuffer();
 }
 
 /*
@@ -191,13 +197,87 @@ function Test_Photos()
 }
 
 /*
+	Test mounting several temporary paths
+*/
+function Test_Mount()
+{
+	var tmp_path_addr = allocate_memory(0x40);
+	
+	// Valid path numbers for mount1: 0xC9, 0xCB, 0xCC
+	var mount_result = sceAppMgr_mount1(0xC9, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+	
+	mount_result = sceAppMgr_mount1(0xCB, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+	
+	mount_result = sceAppMgr_mount1(0xCC, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+	
+	// Valid path numbers for mount2: 0x64, 0x65, 0x66, 0x67, 0x69, 0x6C
+	mount_result = sceAppMgr_mount2(0x64, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+	
+	mount_result = sceAppMgr_mount2(0x65, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+	
+	mount_result = sceAppMgr_mount2(0x66, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+	
+	mount_result = sceAppMgr_mount2(0x67, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+	
+	mount_result = sceAppMgr_mount2(0x69, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+	
+	mount_result = sceAppMgr_mount2(0x6C, tmp_path_addr);
+	if (!mount_result)
+	{
+		var mount_path = read_string(tmp_path_addr);
+		list_dir(mount_path);
+	}
+}
+
+/*
 	Mount a temporary path and create a sample file
 */
 function Test_WriteFile()
 {	
 	var scelibc = libraries.SceLibc.functions;
 
-	var tmp_path_addr = sceAppMgr_mount(0xCC);
+	var tmp_path_addr = allocate_memory(0x40);
+	var mount_result = sceAppMgr_mount1(0xCC, tmp_path_addr);
 	var mount_path = read_string(tmp_path_addr);
 	
 	var fname = mount_path + "test.bin";
@@ -357,6 +437,173 @@ function Test_Gxm()
 	
 	// Terminate GXM
 	sceGxmTerminate();
+}
+
+/*
+	sceIoDevctl test
+*/
+function Test_Devctl()
+{
+	var arg_addr = allocate_memory(0x100);
+	var bufp_addr = allocate_memory(0x100);
 	
-    return result;
+	// _fs_util_get_device_info
+	sceIoDevctl("sdstor0:", 1, arg_addr, 0x100, bufp_addr, 0x100);
+	
+	// _fs_util_device_format
+	sceIoDevctl("sdstor0:", 2, arg_addr, 0x100, bufp_addr, 0x100);
+}
+
+/*
+	Test and retrieve kernel objects
+*/
+function Test_KernelObjs()
+{
+	var scekernel = libraries.SceLibKernel.functions;
+	var scelibc = libraries.SceLibc.functions;
+	
+	var in_fd = scelibc.sceKernelGetStdin();
+	logdbg("sceKernelGetStdin: 0x" + in_fd.toString(16));
+	
+	var out_fd = scelibc.sceKernelGetStdout();
+	logdbg("sceKernelGetStdout: 0x" + out_fd.toString(16));
+	
+	var err_fd = scelibc.sceKernelGetStderr();
+	logdbg("sceKernelGetStderr: 0x" + err_fd.toString(16));
+	
+	var thid = scekernel.sceKernelGetThreadId();
+	logdbg("sceKernelGetThreadId: 0x" + thid.toString(16));
+	
+	var prid = scekernel.sceKernelGetProcessId();
+	logdbg("sceKernelGetProcessId: 0x" + prid.toString(16));
+}
+
+/*
+	Test sceAudioOut
+*/
+function Test_Audio()
+{
+	var scepaf = libraries.ScePaf.functions;
+	
+	var audio_buf_addr = allocate_memory(0x400);
+	libc_memset(audio_buf_addr, 0, 0x400);
+	
+	// Create a new audio port with sample size 0x400 and audio format 1.
+	var new_port = scepaf.sceAudio_new(0x400, 1);
+	logdbg("sceAudio_new: 0x" + new_port.toString(16));
+	
+	// Open the first available audio port (either new_port or an already existing one)
+	// and set audio sample size, audio frequency and format.
+	var port = scepaf.sceAudioOutOpenPort(0, 0x400, 0xBB80, 1);
+	logdbg("sceAudioOutOpenPort: 0x" + port.toString(16));
+	
+	// Change port's volume (if needed).
+	result = scepaf.sceAudioOutSetVolume(port, 3);
+	logdbg("sceAudioOutSetVolume: 0x" + result.toString(16));
+	
+	// Output raw PCM audio.
+	for (var i = 0; i < 0x100; i++)
+	{
+		// Generate random static noise.
+		for (var j = 0; j < 0x400; j += 0x40)
+			sceLibRng_generate(audio_buf_addr + j, 0x40, 1);
+		
+		// Output audio.
+		result = scepaf.sceAudioOutOutput(port, audio_buf_addr);
+	}
+	logdbg("sceAudioOutOutput: 0x" + result.toString(16));
+	
+	// Release current audio port (if needed).
+	result = scepaf.sceAudioOutReleasePort(port);
+	logdbg("sceAudioOutReleasePort: 0x" + result.toString(16));
+	
+	// Release the new audio port (if needed).
+	result = scepaf.sceAudioOutReleasePort(new_port);
+	logdbg("sceAudioOutReleasePort: 0x" + result.toString(16));
+}
+
+/*
+	Test all user-space address range
+*/
+function Test_AddrRange()
+{
+	var memblock_info_addr = allocate_memory(0x100);
+	
+	for (var i = 0; i < 0xFFFFFFFF; i += 0x1000)
+	{
+		// Disable logging of this function and redirect results to a log file.
+		var result = sceKernelGetMemBlockInfoByRange(i, 0x1000, memblock_info_addr, 1);
+		
+		if (!result)
+			log_out("sceKernelGetMemBlockInfoByRange found valid range: 0x" + i.toString(16));
+	}
+}
+
+/*
+	Test drawing in WebKit's frame buffer
+*/
+function Test_FrameBuffer()
+{
+	var color = 0x000000;
+	var count = 0;
+
+	var black = 0xFF000000;
+	var red = 0xFFFF0000;
+	var green = 0xFF00FF00;
+	var blue = 0xFF0000FF;
+	var white = 0xFFFFFFFF;
+
+	var setScreenCount = 0;
+
+	while (true) {
+		if (color < 0xFF)
+		{
+			color += 0x8;
+		}
+		else if (color < 0xFF00)
+		{
+			color &= 0xFFFF00;
+			color += 0x800;
+		}
+		else if (color < 0xFF0000)
+		{
+			color &= 0xFF0000;
+			color += 0x80000;
+		}
+		else
+		{
+			color = 0x8;
+		}
+    
+		if (color)
+		{
+			color |= 0xFF000000;
+		}
+		else
+		{
+			switch(setScreenCount)
+			{
+				case 1: color = black; break;
+				case 2: color = white; break;
+				case 3: color = red; break;
+				case 4: color = blue; break;
+				case 5: color = green; break;
+			}
+
+			if (++setScreenCount > 5) { setScreenCount = 1; }
+		}
+
+		var framebuffer = 0x70000000;
+		var tempbuffer = framebuffer;
+		var iter = 20; // 20 for full screen, 16 for one block
+		var len = 4;
+ 
+		aspace32[tempbuffer / 4] = color;
+    
+		for (var i = 0; i < iter; ++i)
+		{
+			libc_memcpy(tempbuffer + len, tempbuffer, len);
+			len += len;
+		}
+	}
 }

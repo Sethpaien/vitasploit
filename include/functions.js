@@ -171,6 +171,9 @@ function list_modules(m_name, doDump)
 				logdbg("Module segment memsz: 0x" + mod_memsz.toString(16));
 			}
 			
+			if (j == 0)
+				moduleBase[mod_name] = mod_vaddr;
+			
 			mod_segments.push([mod_vaddr, mod_memsz, mod_name]);
             mod_offsets[mod_name + ".seg"+ j.toString()] = mod_vaddr;
             mod_sizes[mod_name + ".seg"+ j.toString()] = mod_memsz;
