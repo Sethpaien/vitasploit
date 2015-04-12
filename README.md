@@ -57,6 +57,19 @@ Start up the server by running the `server.py` script. Using your Vita browse to
   - `Test_Control()` -> Track and print the left and right analog buttons' coordinates
   - `Test_Touch()` -> Print the coordinates of the last screen area that was touched
   - `Test_Gxm()` -> Test the GXM memory by mapping some if it's components
+  - `Test_Mount()` -> Mount and list the contents of several temporary folders
+  - `Test_Devctl()` -> Test sending specific IoDevctl commands
+  - `Test_KernelObjs()` -> Retrieve the IDs of certain kernel objects
+  - `Test_Audio()` -> Test outputting static noise
+  - `Test_AddrRange()` -> Bruteforce and validate the entire user mode address space
+  - `Test_FrameBuffer()` -> MrNetrix's test for drawing in WebKit's frame buffer
+  
+**Syscall fuzzer mode:**
+  - Make sure `ROP mode` is enabled first;
+  - In the main html file (`index.html`) set `var doSyscallFuzz = true` and `var syscallFuzzVersion` to the version you wish to test (e.g.: `var syscallFuzzVersion = "318"`);
+  - After reaching the shell, type `run Test_Fuzzer()`;
+  - This mode will attempt fuzzing the syscalls of every module possible;
+  - WARNING: Test this mode at your own risk!
     
 Credits
 =======
@@ -67,4 +80,5 @@ Credits
 - **Davee**, **Josh_Axey** and **Archaemic**: Individual PoC code to showcase this vulnerability;
 - **Yifan Lu**: UVLoader source code and extensive documentation on the Vita (http://yifan.lu/);
 - **mr.gas**, **tomtomdu80** and **YANOX**: Several findings and reverse-engineer works on the Vita;
+- **MichelMichel/JumpCallPop**: Syscall fuzzer;
 - **BlackDaemon**: Testing.
