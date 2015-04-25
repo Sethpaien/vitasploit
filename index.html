@@ -1,122 +1,42 @@
 <html>
 <body>
-<script src="include/exploit.js"></script>
-<script src="include/jquery.min.js"></script>
-<script src="include/lib.js"></script>
-<script src="include/rop.js"></script>
-<script src="include/functions.js"></script>
-<script src="include/shell.js"></script>
-<script src="include/utils.js"></script>
 
 <script type="text/javascript">
-var doSyscallFuzz = false;
-var syscallFuzzVersion = "318";
-var doROP = true;
-var useShell = true;
-var updateIntervalTime = 20;
-
-// Global vars
-var moduleBase = {};
-var log_out_filepath = "log.txt"; // Comment out to disable log_out.
-var _gc, _cnt = 0;
-var leakedptr;
-        
-/*
-   Main
-*/
-$(document).ready(function()
+// Check the Vita's firmware version and
+// launch the appropriate exploit.
+var ua = navigator.userAgent;
+if ((ua.indexOf("Vita 3.36") != -1) || 
+	(ua.indexOf("Vita 3.35") != -1) || 
+	(ua.indexOf("Vita 3.30") != -1))
 {
-    try {
-        var found = 0;
-        
-		for(var i = 0; i < 20; i++)
-		{
-            var res = initMemoryHole(doROP);
-            if (res != -1) {
-				found = 1;
-				break
-			};
-        }
-
-        if (found == 0)
-		{
-            logdbg("Initialization failed!");
-            return;
-        }
-        
-        delayedScripts = [
-            "include/js-struct.js",
-            "include/functions_ex.js",
-            "include/tests.js",
-            "include/errors.js"
-        ]
-		
-		if (doSyscallFuzz)
-		{
-			delayedScripts.push("include/syscall_fuzzer/fuzzer.js");
-			delayedScripts.push("include/syscall_fuzzer/syscall_map_" + syscallFuzzVersion + ".js");
-		}
-
-        if (!delayedScripts || delayedScripts.length == 0) 
-		{
-            OnScriptsLoaded();
-        }
-        else 
-		{
-            delayedScriptsLoaded = 0;
-            currentDelayedScript = -1;
-     
-            window.setTimeout(function() { TryLoadScript() }, 100);
-        }
-    }
-	catch(e)
-	{
-        logdbg("MainError: " + e);
-    }
-});
-
-function OnScriptsLoaded()
+	window.location = "FW_330_336.html";
+} 
+else if ((ua.indexOf("Vita 3.20") != -1) ||
+	(ua.indexOf("Vita 3.18") != -1) ||
+	(ua.indexOf("Vita 3.15") != -1) ||
+	(ua.indexOf("Vita 3.12") != -1) ||
+	(ua.indexOf("Vita 3.10") != -1) ||
+	(ua.indexOf("Vita 3.01") != -1) ||
+	(ua.indexOf("Vita 3.00") != -1) ||
+	(ua.indexOf("Vita 2.61") != -1) ||
+	(ua.indexOf("Vita 2.60") != -1) ||
+	(ua.indexOf("Vita 2.50") != -1) ||
+	(ua.indexOf("Vita 2.12") != -1) ||
+	(ua.indexOf("Vita 2.11") != -1) ||
+	(ua.indexOf("Vita 2.10") != -1) ||
+	(ua.indexOf("Vita 2.06") != -1) ||
+	(ua.indexOf("Vita 2.05") != -1) ||
+	(ua.indexOf("Vita 2.02") != -1) ||
+	(ua.indexOf("Vita 2.01") != -1) ||
+	(ua.indexOf("Vita 2.00") != -1))
 {
-    Run_Test();
-    
-    if (useShell) 
-	{
-        shell(aspace);
-    }
-    else 
-	{        
-        updateInterval = window.setInterval(function() { UpdateFunc() }, updateIntervalTime);
-    }
+	window.location = "FW_200_320.html";
 }
-
-function TryLoadScript()
+else
 {
-    if (delayedScriptsLoaded == delayedScripts.length)
-	{
-        OnScriptsLoaded();
-        return;
-    }
-    
-    if (currentDelayedScript < delayedScriptsLoaded)
-    {
-        currentDelayedScript = delayedScriptsLoaded;
-        
-        var script = delayedScripts[delayedScriptsLoaded];
-        $.get(script, function(data)
-		{
-			logdbg("Loaded " + delayedScripts[delayedScriptsLoaded] + " (" + (delayedScriptsLoaded + 1).toString() + "/" + delayedScripts.length.toString() + ")");        
-            ++delayedScriptsLoaded;
-            
-            window.setTimeout(function() { TryLoadScript() }, 50);
-        });    
-    }
-}
-
-function UpdateFunc()
-{
+	alert("Unsupported firmware version!");
 }
 </script>
 
-<div id="log"></div>
 </body>
 </html>
