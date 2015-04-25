@@ -75,6 +75,7 @@ Credits
 =======
 
 - **Amat Cama**, **johntheropper** and **freebot**: Original Vita exploit toolkit/SDK code (https://github.com/acama/webkitties);
+- **xyz**: New exploit for firmwares 3.30, 3.35 and 3.36;
 - **CodeLion/BrianBTB/BBalling1**: Original PoC, module dumping code and other utilities (https://github.com/BrianBTB/memtools_vita and https://github.com/BrianBTB/JSoS-Module-Dump-Release);
 - **nas**: sceSysmoduleLoadModule finding (http://pastie.org/private/ugchhaqctvmw5rrg5w37ka);
 - **Davee**, **Josh_Axey** and **Archaemic**: Individual PoC code to showcase this vulnerability;
