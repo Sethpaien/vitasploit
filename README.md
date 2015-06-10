@@ -41,7 +41,7 @@ Start up the server by running the `server.py` script. Using your Vita browse to
 - With this setting the script will launch a pre-programmed, firmware dependent, ROP chain;
 - You can use the functions availabe at `include/functions.js` and `include/functions_ex.js` to interact in a SDK-like fashion with the Vita;
 - Several batch tests are available at `include/tests.js`. Simply uncomment them under Run_Tests() and the tests will run after the exploit is ready;
-- The following tests are currently implemented for firmwares 2.02, 2.12, 3.00, 3.01, 3.15 and 3.18:
+- The following tests are currently implemented for firmwares 2.02, 2.05, 2.12, 3.00, 3.01, 3.15 and 3.18:
   - `testStructs()` -> MrNetrix's test for custom structure allocation
   - `Test_Modules()` -> Based on CodeLion/BrianBTB/BBalling1's module dumping code and complemented by nas's sysmodule loading code. Forces all user modules to be loaded into memory and dumps them to "dumps" folder
   - `Test_Memblock()` -> A simple memory alloc/free test using the SceLibKernel syscalls
@@ -82,4 +82,4 @@ Credits
 - **Yifan Lu**: UVLoader source code and extensive documentation on the Vita (http://yifan.lu/);
 - **mr.gas**, **tomtomdu80** and **YANOX**: Several findings and reverse-engineer works on the Vita;
 - **MichelMichel/JumpCallPop**: Syscall fuzzer;
-- **BlackDaemon**: Testing.
+- **BlackDaemon**, **blue78**, **Sparky**, **heleius** and **Proxima**: Testing and porting.
