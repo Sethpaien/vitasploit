@@ -8,6 +8,13 @@
 function defineOffsets()
 {
 	ver_offsets = {
+		v3_35:{
+				elementvtable_off: -0x70,
+				setscrollleft_idx: 0x4e, // * 4
+				scewkbase_off: 0x406955,
+				scelibcentry_off: 0x857158,
+				scelibcbase_off: 0xf9f5,
+		},
 		v3_36:{
 				elementvtable_off: -0x70,
 				setscrollleft_idx: 0x4e, // * 4
