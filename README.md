@@ -82,4 +82,4 @@ Credits
 - **Yifan Lu**: UVLoader source code and extensive documentation on the Vita (http://yifan.lu/);
 - **mr.gas**, **tomtomdu80** and **YANOX**: Several findings and reverse-engineer works on the Vita;
 - **MichelMichel/JumpCallPop**: Syscall fuzzer;
-- **BlackDaemon**, **blue78**, **Sparky**, **heleius** and **Proxima**: Testing and porting.
+- **BlackDaemon**, **blue78**, **Sparky**, **heleius**, **Proxima** and **Sethpaien**: Testing and porting.
