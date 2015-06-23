@@ -1,5 +1,5 @@
 /*
-    ROP planning (Firmware 3.36)
+    ROP planning (Firmware 3.35 and 3.36)
 */
 
 /*
@@ -95,9 +95,9 @@ function get_caller(tmpmem, element, vtidx, fkvtable, version)
 			
 			var retval = allocate_tmp(0x4);
 
-			if (version == "v3_36")
+			if ((version == "v3_35")||(version == "v3_36"))
 			{
-				// ROP chain for FW 3.36
+				// ROP chain for FW 3.35 and 3.36
 				var r1values = allocate_tmp(0x10 * 4);
 				var r4values = allocate_tmp(0x10 * 4);
 				var r1values2 = allocate_tmp(0x10 * 4);
