@@ -8,7 +8,26 @@ function defineLibraryFuncs()
 	sceLibcFcns_v335 =
 	{
 		time: 0x000006e9,
+		fopen: 0x451d,
+		fread: 0x484d,
+		memset: 0x00013d91
 	}
+	
+	sceAppUtilFcns_v335 =
+	{
+		sceAppUtilInit : 0x000024af,
+		sceAppUtilPhotoMount : 0x000029cf,
+		sceCallSupportUri : 0x00007b28
+	}
+	
+	sceKernelFcns_v335 =
+	{
+		sceKernelGetModuleList: 0x00005b3c,
+		sceKernelGetModuleInfo: 0x00005b4c,
+		sceIoDopen  : 0x000097bd,
+		sceIoDread  : 0x000097cd
+	}
+	
 	// FW 3.36 library functions' offsets.
 	sceLibcFcns_v336 =
 	{
@@ -40,6 +59,36 @@ function defineLibraryFuncs()
 					scesetjmp : 0x13df0 | 1,
 					scelongjmp : 0x13e18 | 1
 				}
+			},
+			"SceLibKernel":
+			{ 
+				functions : sceKernelFcns_v335, 
+				gadgets : {}
+			},
+			"SceAppUtil":
+			{
+				functions : sceAppUtilFcns_v335, 
+				gadgets : {}
+			},
+			"SceWebKitProcess":
+			{
+				functions : {}, 
+				gadgets : {}
+			},
+			"SceCommonDialog":
+			{
+				functions : {},  
+				gadgets : {}
+			},
+			"SceDriverUser":
+			{
+				functions : {},  
+				gadgets : {}
+			},
+			"SceGxm":
+			{
+				functions : {}, 
+				gadgets : {}
 			}
 		},
 		v3_36:
