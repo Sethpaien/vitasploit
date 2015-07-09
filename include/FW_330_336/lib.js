@@ -28,6 +28,17 @@ function defineLibraryFuncs()
 		sceIoDread  : 0x000097cd
 	}
 	
+	sceCommonDialogFcns_v335 =
+	{
+		sceSysmoduleLoadModuleWithArgs : 0x0000c470,
+		sceSysmoduleUnloadModuleWithArgs : 0x0000c460
+	}
+	
+	sceWebKitProcessFcns_v335 =
+	{		
+		sceSysmoduleLoadModule : 0x00012bf0
+	}
+	
 	// FW 3.36 library functions' offsets.
 	sceLibcFcns_v336 =
 	{
@@ -72,12 +83,12 @@ function defineLibraryFuncs()
 			},
 			"SceWebKitProcess":
 			{
-				functions : {}, 
+				functions : sceWebKitProcessFcns_v335, 
 				gadgets : {}
 			},
 			"SceCommonDialog":
 			{
-				functions : {},  
+				functions : sceCommonDialogFcns_v335,  
 				gadgets : {}
 			},
 			"SceDriverUser":
