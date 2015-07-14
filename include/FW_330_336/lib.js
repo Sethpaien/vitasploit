@@ -28,6 +28,15 @@ function defineLibraryFuncs()
 		sceIoDread  : 0x000097cd
 	}
 	
+	sceDriverUserFcns_v335 =
+	{
+		sceAppMgrConvertVs0UserDrivePath : 0x00001a04,
+		sceMotionStartSampling : 0x000073d9,
+		sceMotionMagnetometerOn : 0x0000738d, 
+		sceMotionStopSampling : 0x00007445,
+		sceMotionGetState : 0x00005ea9,
+	}
+	
 	sceCommonDialogFcns_v335 =
 	{
 		sceSysmoduleLoadModuleWithArgs : 0x0000c470,
@@ -93,7 +102,7 @@ function defineLibraryFuncs()
 			},
 			"SceDriverUser":
 			{
-				functions : {},  
+				functions : sceDriverUserFcns_v335,  
 				gadgets : {}
 			},
 			"SceGxm":
